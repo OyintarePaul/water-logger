@@ -1,98 +1,159 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import WeeklyChart from '@/components/weekly-chart';
+import { getTodayKey } from '@/lib/dates';
+import { colors, DAILY_GOAL, fonts, spacing } from '@/lib/theme';
+import { addGlass, getCount, undoGlass } from '@/lib/water-storage';
+import * as Haptics from 'expo-haptics';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
+  const [count, setCount] = useState<number | null>(null);
+
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  useEffect(() => {
+    getCount(getTodayKey()).then(setCount);
+  }, []);
+
+  async function handleAdd() {
+    const next = await addGlass(getTodayKey());
+    setCount(next);
+    scale.value = withSequence(
+      withTiming(1.2, { duration: 100 }),
+      withTiming(1, { duration: 150 }),
+    );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+  }
+
+  async function handleUndo() {
+    const next = await undoGlass(getTodayKey());
+    setCount(next);
+  }
+
+  if (count === null) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom + spacing.lg },
+      ]}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.titleRow}>
+        <MaterialDesignIcons name="water" size={28} color={colors.primary} />
+        <Text style={styles.title}>Water</Text>
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <View style={styles.card}>
+        <Animated.Text style={[styles.count, animatedStyle]}>{count}</Animated.Text>
+        <Text style={styles.goal}>/ {DAILY_GOAL} glasses</Text>
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+      <Pressable
+        onPress={handleAdd}
+        style={({ pressed }) => [styles.addButton, { opacity: pressed ? 0.7 : 1 }]}>
+        <MaterialDesignIcons name="water-plus" size={22} color="#fff" />
+        <Text style={styles.addButtonText}>Add glass</Text>
+      </Pressable>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <Pressable
+        onPress={handleUndo}
+        style={({ pressed }) => [styles.undoButton, { opacity: pressed ? 0.7 : 1 }]}>
+        <MaterialDesignIcons name="undo-variant" size={18} color={colors.muted} />
+        <Text style={styles.undoButtonText}>Undo</Text>
+      </Pressable>
+
+      <WeeklyChart todayCount={count} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  titleRow: {
     flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+    marginBottom: spacing.lg,
   },
   title: {
-    textAlign: 'center',
+    fontFamily: fonts.bold,
+    fontSize: 28,
+    color: colors.text,
   },
-  code: {
-    textTransform: 'uppercase',
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: spacing.xl,
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: '#E0EEF5',
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  count: {
+    fontFamily: fonts.bold,
+    fontSize: 80,
+    color: colors.primary,
+    lineHeight: 90,
+  },
+  goal: {
+    fontFamily: fonts.regular,
+    fontSize: 18,
+    color: colors.muted,
+    marginTop: spacing.sm,
+  },
+  addButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 20,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    marginBottom: spacing.md,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  addButtonText: {
+    fontFamily: fonts.bold,
+    fontSize: 18,
+    color: '#FFFFFF',
+  },
+  undoButton: {
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  undoButtonText: {
+    fontFamily: fonts.regular,
+    fontSize: 16,
+    color: colors.muted,
   },
 });
