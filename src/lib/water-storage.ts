@@ -1,4 +1,5 @@
 import Storage from 'expo-sqlite/kv-store';
+import { formatDateKey } from '@/lib/dates';
 
 export const STORAGE_KEY = 'water-log';
 
@@ -41,6 +42,7 @@ export async function undoGlass(dateKey: string): Promise<number> {
   return next;
 }
 
+// Consecutive days meeting the goal, ending today (or yesterday, if today isn't done yet)
 export async function getStreak(goal: number): Promise<number> {
   const log = await readLog();
   const cursor = new Date();
