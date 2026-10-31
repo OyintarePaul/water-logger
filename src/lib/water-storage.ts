@@ -40,3 +40,21 @@ export async function undoGlass(dateKey: string): Promise<number> {
   await writeLog(log);
   return next;
 }
+
+export async function getStreak(goal: number): Promise<number> {
+  const log = await readLog();
+  const cursor = new Date();
+
+  // Today hasn't met the goal yet: start counting from yesterday instead
+  if ((log[formatDateKey(cursor)] ?? 0) < goal) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  let streak = 0;
+  while (streak < 365 && (log[formatDateKey(cursor)] ?? 0) >= goal) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}

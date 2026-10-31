@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { getLast7DayKeys } from '@/lib/dates';
-import { colors, DAILY_GOAL, fonts, spacing } from '@/lib/theme';
-import { STORAGE_KEY } from "@/lib/water-storage"
+import { colors, fonts, spacing } from '@/lib/theme';
+import { STORAGE_KEY } from '@/lib/water-storage';
 
 type WaterLog = Record<string, number>;
 
@@ -20,14 +20,14 @@ type BarItem = {
 
 type Props = {
   todayCount: number;
+  goal: number;
 };
 
-export default function WeeklyChart({ todayCount }: Props) {
+export default function WeeklyChart({ todayCount, goal }: Props) {
   const { width: screenWidth } = useWindowDimensions();
   const [barData, setBarData] = useState<BarItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  // card has horizontal padding on both sides (spacing.lg * 2) plus card's own padding (spacing.lg * 2)
   const chartWidth = screenWidth - spacing.lg * 4;
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function WeeklyChart({ todayCount }: Props) {
         const label = DAY_LABELS[date.getDay()];
         const isToday = i === keys.length - 1;
         const rawValue = isToday ? todayCount : (log[key] ?? 0);
-        const value = Math.min(rawValue, DAILY_GOAL);
+        const value = Math.min(rawValue, goal);
         return { value, label, rawValue, frontColor: colors.primary };
       });
 
@@ -62,15 +62,16 @@ export default function WeeklyChart({ todayCount }: Props) {
         }))
       );
     }
+
     loadChart();
-  }, [todayCount, selectedIndex]);
+  }, [todayCount, goal, selectedIndex]);
 
   return (
     <View style={styles.card}>
       <Text style={styles.heading}>Last 7 days</Text>
       <BarChart
         data={barData}
-        maxValue={DAILY_GOAL}
+        maxValue={goal}
         initialSpacing={0}
         yAxisLabelWidth={0}
         adjustToWidth

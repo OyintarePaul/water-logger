@@ -1,19 +1,40 @@
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ProgressRing from '@/components/progress-ring';
 import WeeklyChart from '@/components/weekly-chart';
 import { getTodayKey } from '@/lib/dates';
-import { colors, DAILY_GOAL, fonts, spacing } from '@/lib/theme';
+import { colors, fonts, spacing } from '@/lib/theme';
+import { DEFAULTS, getSettings } from '@/lib/settings-storage';
 import { addGlass, getCount, undoGlass } from '@/lib/water-storage';
 import * as Haptics from 'expo-haptics';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
 
+const RING_STROKE = 14;
+const RING_MAX_RADIUS = 90;
+const CARD_PADDING = spacing.lg;
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
   const [count, setCount] = useState<number | null>(null);
-
+  const [goal, setGoal] = useState(DEFAULTS.dailyGoal);
   const scale = useSharedValue(1);
+
+  // Fit the ring inside the card: screen minus page padding, card padding and border
+  const availableWidth = screenWidth - spacing.lg * 2 - CARD_PADDING * 2 - 2;
+  const radius = Math.min(RING_MAX_RADIUS, Math.floor((availableWidth - RING_STROKE) / 2));
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -21,6 +42,13 @@ export default function HomeScreen() {
   useEffect(() => {
     getCount(getTodayKey()).then(setCount);
   }, []);
+
+  // Reload the goal each time the tab is opened, so changes in Settings apply here
+  useFocusEffect(
+    useCallback(() => {
+      getSettings().then(s => setGoal(s.dailyGoal));
+    }, [])
+  );
 
   async function handleAdd() {
     const next = await addGlass(getTodayKey());
@@ -57,27 +85,25 @@ export default function HomeScreen() {
         <MaterialDesignIcons name="water" size={28} color={colors.primary} />
         <Text style={styles.title}>Water</Text>
       </View>
-
       <View style={styles.card}>
-        <Animated.Text style={[styles.count, animatedStyle]}>{count}</Animated.Text>
-        <Text style={styles.goal}>/ {DAILY_GOAL} glasses</Text>
+        <ProgressRing count={count} goal={goal} radius={radius} strokeWidth={RING_STROKE}>
+          <Animated.Text style={[styles.count, animatedStyle]}>{count}</Animated.Text>
+          <Text style={styles.goal}>/ {goal} glasses</Text>
+        </ProgressRing>
       </View>
-
       <Pressable
         onPress={handleAdd}
         style={({ pressed }) => [styles.addButton, { opacity: pressed ? 0.7 : 1 }]}>
         <MaterialDesignIcons name="water-plus" size={22} color="#fff" />
         <Text style={styles.addButtonText}>Add glass</Text>
       </Pressable>
-
       <Pressable
         onPress={handleUndo}
         style={({ pressed }) => [styles.undoButton, { opacity: pressed ? 0.7 : 1 }]}>
         <MaterialDesignIcons name="undo-variant" size={18} color={colors.muted} />
         <Text style={styles.undoButtonText}>Undo</Text>
       </Pressable>
-
-      <WeeklyChart todayCount={count} />
+      <WeeklyChart todayCount={count} goal={goal} />
     </ScrollView>
   );
 }
@@ -111,7 +137,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderRadius: 20,
-    padding: spacing.xl,
+    padding: CARD_PADDING,
     alignItems: 'center',
     marginBottom: spacing.lg,
     borderWidth: 1,
@@ -119,15 +145,18 @@ const styles = StyleSheet.create({
   },
   count: {
     fontFamily: fonts.bold,
-    fontSize: 80,
+    fontSize: 64,
+    lineHeight: 72,
     color: colors.primary,
-    lineHeight: 90,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   goal: {
     fontFamily: fonts.regular,
-    fontSize: 18,
+    fontSize: 16,
     color: colors.muted,
     marginTop: spacing.sm,
+    textAlign: 'center',
   },
   addButton: {
     backgroundColor: colors.primary,

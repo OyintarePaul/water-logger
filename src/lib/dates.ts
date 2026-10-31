@@ -1,9 +1,12 @@
-export function getTodayKey(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+export function formatDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+export function getTodayKey(): string {
+  return formatDateKey(new Date());
 }
 
 export function getLast7DayKeys(): string[] {
@@ -11,10 +14,7 @@ export function getLast7DayKeys(): string[] {
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    keys.push(`${year}-${month}-${day}`);
+    keys.push(formatDateKey(d));
   }
   return keys;
 }
