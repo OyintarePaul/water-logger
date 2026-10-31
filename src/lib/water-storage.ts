@@ -5,6 +5,8 @@ export const STORAGE_KEY = 'water-log';
 
 type WaterLog = Record<string, number>;
 
+export type HistoryEntry = { dateKey: string; count: number };
+
 async function readLog(): Promise<WaterLog> {
   try {
     const raw = await Storage.getItem(STORAGE_KEY);
@@ -59,4 +61,12 @@ export async function getStreak(goal: number): Promise<number> {
   }
 
   return streak;
+}
+
+// Every logged day, newest first
+export async function getAllEntries(): Promise<HistoryEntry[]> {
+  const log = await readLog();
+  return Object.entries(log)
+    .map(([dateKey, count]) => ({ dateKey, count }))
+    .sort((a, b) => b.dateKey.localeCompare(a.dateKey));
 }

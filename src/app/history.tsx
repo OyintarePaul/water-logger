@@ -1,23 +1,137 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts } from '@/lib/theme';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useCallback, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getSettings, DEFAULTS } from '@/lib/settings-storage';
+import { colors, fonts, spacing } from '@/lib/theme';
+import { getAllEntries, HistoryEntry } from '@/lib/water-storage';
 
-// Placeholder — replaced by the History screen (feature 5).
+function formatDateLabel(dateKey: string): string {
+  const date = new Date(dateKey + 'T00:00:00');
+  return date.toLocaleDateString(undefined, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
 export default function HistoryScreen() {
+  const insets = useSafeAreaInsets();
+  const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
+  const [goal, setGoal] = useState(DEFAULTS.dailyGoal);
+
+  // Reload each time the tab is opened, so new glasses and goal changes show up
+  useFocusEffect(
+    useCallback(() => {
+      Promise.all([getAllEntries(), getSettings()]).then(([list, settings]) => {
+        setEntries(list);
+        setGoal(settings.dailyGoal);
+      });
+    }, [])
+  );
+
+  if (entries === null) {
+    return <View style={styles.loading} />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>History</Text>
+    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+      <Text style={styles.title}>History</Text>
+
+      <View style={styles.card}>
+        <FlatList
+          data={entries}
+          keyExtractor={item => item.dateKey}
+          contentContainerStyle={styles.list}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={styles.emptyText}>No history yet. Start logging today!</Text>
+            </View>
+          }
+          renderItem={({ item }) => {
+            const met = item.count >= goal;
+            return (
+              <View style={styles.row}>
+                <View style={styles.rowText}>
+                  <Text style={styles.date}>{formatDateLabel(item.dateKey)}</Text>
+                  <Text style={styles.detail}>
+                    {item.count} / {goal} glasses
+                  </Text>
+                </View>
+                <MaterialDesignIcons
+                  name={met ? 'check-circle' : 'circle-outline'}
+                  size={24}
+                  color={met ? colors.primary : colors.muted}
+                />
+              </View>
+            );
+          }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+  },
+  title: {
+    fontFamily: fonts.bold,
+    fontSize: 28,
+    color: colors.text,
+    marginBottom: spacing.lg,
+  },
+  card: {
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0EEF5',
+    overflow: 'hidden',
+    marginBottom: spacing.lg,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  rowText: {
+    flex: 1,
+  },
+  date: {
+    fontFamily: fonts.bold,
+    fontSize: 16,
+    color: colors.text,
+  },
+  detail: {
+    fontFamily: fonts.regular,
+    fontSize: 14,
+    color: colors.muted,
+    marginTop: 2,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#E0EEF5',
+  },
+  list: {
+    flexGrow: 1,
+  },
+  empty: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
   },
-  text: {
+  emptyText: {
     fontFamily: fonts.regular,
     fontSize: 16,
     color: colors.muted,
