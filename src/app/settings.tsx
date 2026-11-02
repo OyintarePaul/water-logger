@@ -27,7 +27,7 @@ export default function SettingsScreen() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [draft, setDraft] = useState('');
   const [permissionDenied, setPermissionDenied] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(true);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   // Reload each time the tab is opened
   useFocusEffect(

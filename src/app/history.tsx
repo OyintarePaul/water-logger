@@ -61,8 +61,8 @@ export default function HistoryScreen() {
                   </Text>
                 </View>
                 <MaterialDesignIcons
-                  name={met ? 'check-circle' : 'circle-outline'}
-                  size={24}
+                  name={met ? 'check' : 'minus'}
+                  size={met ? 22 : 20}
                   color={met ? colors.primary : colors.muted}
                 />
               </View>
