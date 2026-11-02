@@ -6,6 +6,9 @@ import { ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/lib/theme';
+import * as Notifications from 'expo-notifications';
+import { useEffect } from 'react';
+import { restoreReminder } from '@/lib/notifications';
 
 type IconName = ComponentProps<typeof MaterialDesignIcons>['name'];
 
@@ -17,10 +20,23 @@ const TAB_ICONS: Record<string, [IconName, IconName]> = {
   settings: ['tune-variant', 'tune-variant'],
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_700Bold });
 
+    useEffect(() => {
+    restoreReminder();
+  }, []);
+  
   if (!fontsLoaded) return null;
 
   return (
