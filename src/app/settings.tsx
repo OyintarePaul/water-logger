@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-	ScrollView,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -16,7 +10,7 @@ const MAX_GOAL = 50;
 export default function SettingsScreen() {
 	const insets = useSafeAreaInsets();
 	const { dailyGoal, updateSettings } = useSettingsStore();
-	const [draft, setDraft] = useState(() => String(dailyGoal))
+	const [draft, setDraft] = useState(() => String(dailyGoal));
 
 	async function commitGoal() {
 		const parsed = parseInt(draft, 10);

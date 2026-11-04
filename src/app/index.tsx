@@ -40,8 +40,8 @@ export default function HomeScreen() {
 	}, []);
 
 	useEffect(() => {
-		getStreak(dailyGoal).then(setStreak)
-	}, [dailyGoal])
+		getStreak(dailyGoal).then(setStreak);
+	}, [dailyGoal]);
 
 	async function handleAdd() {
 		const previous = count ?? 0;
