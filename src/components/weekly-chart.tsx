@@ -4,7 +4,7 @@ import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { getLast7DayKeys } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
-import { STORAGE_KEY } from "@/lib/water-storage";
+import { readLog } from "@/lib/water-storage";
 
 type WaterLog = Record<string, number>;
 
@@ -33,11 +33,7 @@ export default function WeeklyChart({ todayCount, goal }: Props) {
 	useEffect(() => {
 		async function loadChart() {
 			const keys = getLast7DayKeys();
-			let log: WaterLog = {};
-			try {
-				const raw = await Storage.getItem(STORAGE_KEY);
-				if (raw) log = JSON.parse(raw);
-			} catch {}
+			let log = await readLog();
 
 			const data = keys.map((key, i) => {
 				const date = new Date(key + "T00:00:00");

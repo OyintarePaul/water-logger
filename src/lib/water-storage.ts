@@ -7,7 +7,7 @@ type WaterLog = Record<string, number>;
 
 export type HistoryEntry = { dateKey: string; count: number };
 
-async function readLog(): Promise<WaterLog> {
+export async function readLog(): Promise<WaterLog> {
 	try {
 		const raw = await Storage.getItem(STORAGE_KEY);
 		if (!raw) return {};

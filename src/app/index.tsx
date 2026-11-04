@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Confetti, type ConfettiMethods } from "react-native-fast-confetti";
 import ProgressRing from "@/components/progress-ring";
 import WeeklyChart from "@/components/weekly-chart";
 import { getTodayKey } from "@/lib/dates";
@@ -27,25 +26,12 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 
-const RING_STROKE = 14;
-const RING_MAX_RADIUS = 90;
-const CARD_PADDING = spacing.lg;
-
 export default function HomeScreen() {
 	const insets = useSafeAreaInsets();
-	const { width: screenWidth } = useWindowDimensions();
 	const [count, setCount] = useState<number | null>(null);
 	const [goal, setGoal] = useState(DEFAULTS.dailyGoal);
 	const [streak, setStreak] = useState(0);
 	const scale = useSharedValue(1);
-	const confettiRef = useRef<ConfettiMethods>(null);
-
-	// Fit the ring inside the card: screen minus page padding, card padding and border
-	const availableWidth = screenWidth - spacing.lg * 2 - CARD_PADDING * 2 - 2;
-	const radius = Math.min(
-		RING_MAX_RADIUS,
-		Math.floor((availableWidth - RING_STROKE) / 2),
-	);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: scale.value }],
@@ -117,12 +103,7 @@ export default function HomeScreen() {
 					</View>
 				)}
 				<View style={styles.card}>
-					<ProgressRing
-						count={count}
-						goal={goal}
-						radius={radius}
-						strokeWidth={RING_STROKE}
-					>
+					<ProgressRing count={count} goal={goal}>
 						<Animated.Text style={[styles.count, animatedStyle]}>
 							{count}
 						</Animated.Text>
@@ -156,20 +137,6 @@ export default function HomeScreen() {
 				</Pressable>
 				<WeeklyChart todayCount={count} goal={goal} />
 			</ScrollView>
-
-			{/* Full-screen overlay for the confetti; passes touches through to the content below */}
-			<View style={StyleSheet.absoluteFill} pointerEvents="none">
-				<Confetti
-					ref={confettiRef}
-					autoplay={false}
-					count={150}
-					gravity={1.5}
-					fadeOutOnEnd
-				>
-					<Confetti.Flake size={10} />
-					<Confetti.Flake width={8} height={14} radius={4} />
-				</Confetti>
-			</View>
 		</View>
 	);
 }
@@ -220,7 +187,7 @@ const styles = StyleSheet.create({
 	card: {
 		backgroundColor: colors.card,
 		borderRadius: 20,
-		padding: CARD_PADDING,
+		padding: spacing.lg,
 		alignItems: "center",
 		marginBottom: spacing.lg,
 		borderWidth: 1,

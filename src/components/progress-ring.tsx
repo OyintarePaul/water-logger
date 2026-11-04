@@ -1,31 +1,34 @@
 import { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import Animated, {
 	useAnimatedProps,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
-import { colors } from "@/lib/theme";
+import { colors, spacing } from "@/lib/theme";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const RING_STROKE = 14;
+const RING_MAX_RADIUS = 90;
+const CARD_PADDING = spacing.lg;
 
 type Props = {
 	count: number;
 	goal: number;
-	radius?: number;
-	strokeWidth?: number;
 	children?: React.ReactNode;
 };
 
-export default function ProgressRing({
-	count,
-	goal,
-	radius = 80,
-	strokeWidth = 14,
-	children,
-}: Props) {
-	const size = radius * 2 + strokeWidth;
+export default function ProgressRing({ count, goal, children }: Props) {
+	const { width: screenWidth } = useWindowDimensions();
+	const availableWidth = screenWidth - spacing.lg * 2 - CARD_PADDING * 2 - 2;
+	const radius = Math.min(
+		RING_MAX_RADIUS,
+		Math.floor((availableWidth - RING_STROKE) / 2),
+	);
+
+	const size = radius * 2 + RING_STROKE;
 	const center = size / 2;
 	const circumference = 2 * Math.PI * radius;
 
@@ -49,7 +52,7 @@ export default function ProgressRing({
 					cy={center}
 					r={radius}
 					stroke="#E0EEF5"
-					strokeWidth={strokeWidth}
+					strokeWidth={RING_STROKE}
 					fill="none"
 					rotation={-90}
 					origin={`${center}, ${center}`}
@@ -59,7 +62,7 @@ export default function ProgressRing({
 					cy={center}
 					r={radius}
 					stroke={colors.primary}
-					strokeWidth={strokeWidth}
+					strokeWidth={RING_STROKE}
 					fill="none"
 					strokeDasharray={[circumference, circumference]}
 					animatedProps={animatedProps}
