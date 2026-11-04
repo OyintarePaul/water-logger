@@ -72,8 +72,8 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.card,
-    borderTopWidth: 1,
+    backgroundColor: colors.background,
+    // borderTopWidth: 1,
     borderTopColor: '#E0EEF5',
     elevation: 0,
     shadowOpacity: 0,
