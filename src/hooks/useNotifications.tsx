@@ -19,13 +19,17 @@ type ScheduleOptions = {
     data?: Record<string, unknown>
 }
 
-export const useNotification = () => {
+export const useNotifications = () => {
     const requestPermission = async () => {
         if (Platform.OS === "android") {
-            await Notifications.setNotificationChannelAsync("default", {
-                name: "default",
-                importance: Notifications.AndroidImportance.MAX
-            })
+            try {
+                await Notifications.setNotificationChannelAsync("default", {
+                    name: "Reminders",
+                    importance: Notifications.AndroidImportance.DEFAULT,
+                });
+            } catch (e) {
+                console.warn("Channel setup failed:", e);
+            }
         }
         const { status } = await Notifications.getPermissionsAsync();
         if (status === "granted") return true;

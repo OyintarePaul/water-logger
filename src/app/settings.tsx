@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Host, Switch } from "@expo/ui/jetpack-compose"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
 
 export default function SettingsScreen() {
 	const insets = useSafeAreaInsets();
-	const { dailyGoal, updateSettings } = useSettingsStore();
+	const { dailyGoal, reminderEnabled, updateSettings } = useSettingsStore();
+	const { requestPermission } = useNotifications()
 	const [draft, setDraft] = useState(() => String(dailyGoal));
+
 
 	async function commitGoal() {
 		const parsed = parseInt(draft, 10);
@@ -23,6 +27,17 @@ export default function SettingsScreen() {
 		updateSettings({ dailyGoal: parsed });
 		setDraft(String(parsed));
 	}
+
+	async function handleReminderToggle(enabled: boolean) {
+	if (!enabled) {
+		updateSettings({ reminderEnabled: false });
+		return;
+	}
+
+	const granted = await requestPermission();
+	updateSettings({ reminderEnabled: granted });
+}
+	
 
 	return (
 		<ScrollView
@@ -52,6 +67,25 @@ export default function SettingsScreen() {
 						returnKeyType="done"
 						style={styles.input}
 					/>
+				</View>
+			</View>
+
+			{/* Reminder */}
+			<Text style={styles.sectionLabel}>Reminder</Text>
+			<View style={styles.card}>
+				<View style={styles.row}>
+					<Text style={styles.rowLabel}>Setup Reminder</Text>
+					<Host matchContents>
+						<Switch value={reminderEnabled} colors={{
+							checkedThumbColor: "#FFFFFF",
+							checkedTrackColor: colors.primary,
+							uncheckedThumbColor: colors.muted,
+							uncheckedTrackColor: "#E0EEF5", // same as your card/input border
+							uncheckedBorderColor: "#E0EEF5",
+						}} 
+						onCheckedChange={handleReminderToggle}
+						/>
+					</Host>
 				</View>
 			</View>
 		</ScrollView>
