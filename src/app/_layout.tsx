@@ -7,10 +7,9 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
 import { ComponentProps } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "@/lib/theme";
-import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
 import { restoreReminder } from "@/lib/notifications";
 
@@ -23,15 +22,6 @@ const TAB_ICONS: Record<string, [IconName, IconName]> = {
 	history: ["history", "history"],
 	settings: ["tune-variant", "tune-variant"],
 };
-
-Notifications.setNotificationHandler({
-	handleNotification: async () => ({
-		shouldShowBanner: true,
-		shouldShowList: true,
-		shouldPlaySound: false,
-		shouldSetBadge: false,
-	}),
-});
 
 export default function RootLayout() {
 	const insets = useSafeAreaInsets();
@@ -81,7 +71,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
 	tabBar: {
 		backgroundColor: colors.background,
-		// borderTopWidth: 1,
+		borderTopWidth: 0,
 		borderTopColor: "#E0EEF5",
 		elevation: 0,
 		shadowOpacity: 0,
