@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Host, Switch } from "@expo/ui/jetpack-compose"
+import { Host, Switch, Button } from "@expo/ui/jetpack-compose"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
-import { useNotifications } from "@/hooks/useNotifications";
+import { requestPermission, scheduleNotification } from "@/lib/notifications";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -12,7 +12,6 @@ const MAX_GOAL = 50;
 export default function SettingsScreen() {
 	const insets = useSafeAreaInsets();
 	const { dailyGoal, reminderEnabled, updateSettings } = useSettingsStore();
-	const { requestPermission } = useNotifications()
 	const [draft, setDraft] = useState(() => String(dailyGoal));
 
 
@@ -29,15 +28,15 @@ export default function SettingsScreen() {
 	}
 
 	async function handleReminderToggle(enabled: boolean) {
-	if (!enabled) {
-		updateSettings({ reminderEnabled: false });
-		return;
+		if (!enabled) {
+			updateSettings({ reminderEnabled: false });
+			return;
+		}
+
+		const granted = await requestPermission();
+		updateSettings({ reminderEnabled: granted });
 	}
 
-	const granted = await requestPermission();
-	updateSettings({ reminderEnabled: granted });
-}
-	
 
 	return (
 		<ScrollView
@@ -82,12 +81,18 @@ export default function SettingsScreen() {
 							uncheckedThumbColor: colors.muted,
 							uncheckedTrackColor: "#E0EEF5", // same as your card/input border
 							uncheckedBorderColor: "#E0EEF5",
-						}} 
-						onCheckedChange={handleReminderToggle}
+						}}
+							onCheckedChange={handleReminderToggle}
 						/>
 					</Host>
 				</View>
 			</View>
+
+			<Button onClick={() => scheduleNotification({
+				title: "Test Notification",
+				body: "This is a test notification",
+				seconds: 5
+			})}>Test Notification</Button>
 		</ScrollView>
 	);
 }

@@ -10,8 +10,6 @@ import { ComponentProps } from "react";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "@/lib/theme";
-import { useEffect } from "react";
-import { restoreReminder } from "@/lib/notifications";
 
 type IconName = ComponentProps<typeof MaterialDesignIcons>["name"];
 
@@ -26,10 +24,6 @@ const TAB_ICONS: Record<string, [IconName, IconName]> = {
 export default function RootLayout() {
 	const insets = useSafeAreaInsets();
 	const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_700Bold });
-
-	useEffect(() => {
-		restoreReminder();
-	}, []);
 
 	if (!fontsLoaded) return null;
 
