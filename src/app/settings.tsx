@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
 import { requestPermission, scheduleNotification } from "@/lib/notifications";
+import Storage from 'expo-sqlite/kv-store';
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -87,6 +88,12 @@ export default function SettingsScreen() {
 					</Host>
 				</View>
 			</View>
+
+			<Host matchContents>
+						<Button onClick={() => Storage.clear()}>
+							<JCText>Clear Data</JCText>
+						</Button>
+			</Host>
 		</ScrollView>
 	);
 }
