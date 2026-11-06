@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Host, Switch, Button } from "@expo/ui/jetpack-compose"
+import { Host, Switch, Button, Text as JCText } from "@expo/ui/jetpack-compose"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -87,12 +87,6 @@ export default function SettingsScreen() {
 					</Host>
 				</View>
 			</View>
-
-			<Button onClick={() => scheduleNotification({
-				title: "Test Notification",
-				body: "This is a test notification",
-				seconds: 5
-			})}>Test Notification</Button>
 		</ScrollView>
 	);
 }
