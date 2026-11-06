@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getSettings, DEFAULTS } from "@/lib/settings-storage";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { getAllEntries, HistoryEntry } from "@/lib/water-storage";
+import { useSettingsStore } from "@/store/settingsStore";
 
 function formatDateLabel(dateKey: string): string {
 	const date = new Date(dateKey + "T00:00:00");
@@ -19,15 +20,12 @@ function formatDateLabel(dateKey: string): string {
 export default function HistoryScreen() {
 	const insets = useSafeAreaInsets();
 	const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
-	const [goal, setGoal] = useState(DEFAULTS.dailyGoal);
+	const dailyGoal = useSettingsStore((state) => state.dailyGoal);
 
 	// Reload each time the tab is opened, so new glasses and goal changes show up
 	useFocusEffect(
 		useCallback(() => {
-			Promise.all([getAllEntries(), getSettings()]).then(([list, settings]) => {
-				setEntries(list);
-				setGoal(settings.dailyGoal);
-			});
+			getAllEntries().then((list) => setEntries(list))
 		}, []),
 	);
 
@@ -53,7 +51,7 @@ export default function HistoryScreen() {
 						</View>
 					}
 					renderItem={({ item }) => {
-						const met = item.count >= goal;
+						const met = item.count >= dailyGoal;
 						return (
 							<View style={styles.row}>
 								<View style={styles.rowText}>
@@ -61,7 +59,7 @@ export default function HistoryScreen() {
 										{formatDateLabel(item.dateKey)}
 									</Text>
 									<Text style={styles.detail}>
-										{item.count} / {goal} glasses
+										{item.count} / {dailyGoal} glasses
 									</Text>
 								</View>
 								<MaterialDesignIcons
