@@ -7,6 +7,7 @@ import { useSettingsStore } from "@/store/settingsStore";
 import { requestPermission, scheduleNotification, cancelNotification } from "@/lib/notifications";
 import Storage from 'expo-sqlite/kv-store';
 import { seedDb } from "@/lib/water-storage";
+import { Link } from "expo-router";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -108,6 +109,13 @@ export default function SettingsScreen() {
 					</Button>
 				</Column>
 			</Host>
+
+			<Link href="/db-test" style={{
+				backgroundColor: colors.background,
+				paddingHorizontal: 8,
+				paddingVertical: 4,
+				borderRadius: 20,
+			}}>Go to DB Test</Link>
 		</ScrollView>
 	);
 }
