@@ -8,6 +8,7 @@ import { requestPermission, scheduleNotification, cancelNotification } from "@/l
 import Storage from 'expo-sqlite/kv-store';
 import { seedDb } from "@/lib/water-storage";
 import { Link } from "expo-router";
+import { resetDatabaseFile } from "@/db/reset";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -106,6 +107,10 @@ export default function SettingsScreen() {
 
 					<Button onClick={() => Storage.clear()}>
 						<JCText>Clear Data</JCText>
+					</Button>
+
+					<Button onClick={resetDatabaseFile}>
+						<JCText>Clear SQLite</JCText>
 					</Button>
 				</Column>
 			</Host>

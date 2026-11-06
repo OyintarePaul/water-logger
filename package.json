@@ -54,7 +54,8 @@
     "web": "expo start --web",
     "lint": "biome lint --write .",
     "format": "biome format --write .",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "generate": "drizzle-kit generate"
   },
   "private": true
 }
