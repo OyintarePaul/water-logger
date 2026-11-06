@@ -10,6 +10,7 @@ import { ComponentProps } from "react";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "@/lib/theme";
+import useDBMigration from "@/hooks/useDBMigration";
 
 type IconName = ComponentProps<typeof MaterialDesignIcons>["name"];
 
@@ -25,8 +26,9 @@ const TAB_ICONS: Record<string, [IconName, IconName]> = {
 export default function RootLayout() {
 	const insets = useSafeAreaInsets();
 	const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_700Bold });
+	const { success: migrationSuccess, error: migrationError } = useDBMigration()
 
-	if (!fontsLoaded) return null;
+	if (!fontsLoaded && !migrationSuccess) return null;
 
 	return (
 		<>
