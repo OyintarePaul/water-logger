@@ -1,5 +1,5 @@
 import Storage from "expo-sqlite/kv-store";
-import { formatDateKey } from "@/lib/dates";
+import { formatDateKey, getLast7DayKeys } from "@/lib/dates";
 
 export const STORAGE_KEY = "water-log";
 
@@ -69,4 +69,15 @@ export async function getAllEntries(): Promise<HistoryEntry[]> {
 	return Object.entries(log)
 		.map(([dateKey, count]) => ({ dateKey, count }))
 		.sort((a, b) => b.dateKey.localeCompare(a.dateKey));
+}
+
+
+
+export async function seedDb() {
+	const keys = getLast7DayKeys()
+	const log = {} as WaterLog
+	for (const key of keys) {
+		log[key] = Math.floor(Math.random() * 20 + 1)
+	}
+	writeLog(log)
 }

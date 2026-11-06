@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Host, Switch, Button, Text as JCText } from "@expo/ui/jetpack-compose"
+import { Host, Switch, Button, Text as JCText, Column } from "@expo/ui/jetpack-compose"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
-import { requestPermission, scheduleNotification } from "@/lib/notifications";
+import { requestPermission, scheduleNotification, cancelNotification } from "@/lib/notifications";
 import Storage from 'expo-sqlite/kv-store';
+import { seedDb } from "@/lib/water-storage";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -90,9 +91,15 @@ export default function SettingsScreen() {
 			</View>
 
 			<Host matchContents>
-						<Button onClick={() => Storage.clear()}>
-							<JCText>Clear Data</JCText>
-						</Button>
+				<Column>
+					<Button onClick={seedDb}>
+						<JCText>Seed DB</JCText>
+					</Button>
+
+					<Button onClick={() => Storage.clear()}>
+						<JCText>Clear Data</JCText>
+					</Button>
+				</Column>
 			</Host>
 		</ScrollView>
 	);
