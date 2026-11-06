@@ -3,7 +3,6 @@ import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { getSettings, DEFAULTS } from "@/lib/settings-storage";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { getAllEntries, HistoryEntry } from "@/lib/water-storage";
 import { useSettingsStore } from "@/store/settingsStore";

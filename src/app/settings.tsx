@@ -31,12 +31,19 @@ export default function SettingsScreen() {
 
 	async function handleReminderToggle(enabled: boolean) {
 		if (!enabled) {
-			updateSettings({ reminderEnabled: false });
+			cancelNotification();
+			updateSettings({ reminderEnabled: false, reminderId: null });
 			return;
 		}
 
 		const granted = await requestPermission();
-		updateSettings({ reminderEnabled: granted });
+		const id = await scheduleNotification({
+			title: "Don't forget to drink",
+			body: "Don't forget to hydrate today",
+			seconds: 3600
+		})
+
+		updateSettings({ reminderEnabled: granted, reminderId: id });
 	}
 
 

@@ -23,11 +23,12 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSettingsStore } from "@/store/settingsStore";
+import { cancelNotification, scheduleNotification } from "@/lib/notifications";
 
 export default function HomeScreen() {
 	const insets = useSafeAreaInsets();
 	const [count, setCount] = useState<number | null>(null);
-	const dailyGoal = useSettingsStore((state) => state.dailyGoal);
+	const {dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
 	const [streak, setStreak] = useState(0);
 	const scale = useSharedValue(1);
 
@@ -54,6 +55,14 @@ export default function HomeScreen() {
 			withTiming(1, { duration: 150 }),
 		);
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+
+		if (reminderEnabled && reminderId) {
+			cancelNotification(reminderId);
+			scheduleNotification({
+				title: "Don't forget to drink",
+				body: "It's an hour already, don't forget to hydrate"
+			})
+		}
 	}
 
 	async function handleUndo() {
