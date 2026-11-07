@@ -1,22 +1,14 @@
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { desc, lte } from "drizzle-orm";
-import { db } from "@/db/init";
-import { logsTable } from "@/db/schema";
 import { formatDateKey } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
+import { getStreakQuery } from "@/db/queries";
 
 export function StreakTracker({ goal }: { goal: number }) {
 	const todayKey = formatDateKey(new Date());
 
-	const { data: records } = useLiveQuery(
-		db
-			.select()
-			.from(logsTable)
-			.where(lte(logsTable.log_date, todayKey))
-			.orderBy(desc(logsTable.log_date)),
-	);
+	const { data: records } = useLiveQuery(getStreakQuery(goal));
 
 	const streak = useMemo(() => {
 		if (!records || records.length === 0) return 0;
