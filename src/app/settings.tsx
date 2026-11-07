@@ -16,7 +16,7 @@ import {
 	cancelNotification,
 } from "@/lib/notifications";
 import Storage from "expo-sqlite/kv-store";
-import { resetDatabaseFile } from "@/db/reset";
+import { resetDatabaseFile, seedLogsDatabase } from "@/db/reset";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -115,6 +115,10 @@ export default function SettingsScreen() {
 
 					<Button onClick={resetDatabaseFile}>
 						<JCText>Clear SQLite</JCText>
+					</Button>
+
+					<Button onClick={seedLogsDatabase}>
+						<JCText>Seed Data</JCText>
 					</Button>
 				</Column>
 			</Host>

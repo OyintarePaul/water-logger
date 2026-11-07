@@ -25,7 +25,7 @@ export default function HomeScreen() {
 	const { dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
 	const scale = useSharedValue(1);
 
-	let count = data[0]?.count ?? 0;
+	const count = data[0]?.count ?? 0;
 
 	async function handleAdd() {
 		await incrementToday();
@@ -74,7 +74,7 @@ export default function HomeScreen() {
 				<MaterialDesignIcons name="water-plus" size={22} color="#fff" />
 				<Text style={styles.addButtonText}>Add glass</Text>
 			</Pressable>
-			<Pressable
+			{/* <Pressable
 				onPress={handleUndo}
 				style={({ pressed }) => [
 					styles.undoButton,
@@ -87,7 +87,7 @@ export default function HomeScreen() {
 					color={colors.muted}
 				/>
 				<Text style={styles.undoButtonText}>Undo</Text>
-			</Pressable>
+			</Pressable> */}
 
 			<WeeklyChart todayCount={count} goal={dailyGoal} />
 		</ScrollView>

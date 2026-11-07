@@ -34,6 +34,7 @@ export default function HistoryScreen() {
 					data={entries}
 					keyExtractor={(item) => item.log_date}
 					contentContainerStyle={styles.list}
+					showsVerticalScrollIndicator={false}
 					ItemSeparatorComponent={() => <View style={styles.separator} />}
 					ListEmptyComponent={
 						<View style={styles.empty}>
