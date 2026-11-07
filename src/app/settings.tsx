@@ -101,10 +101,6 @@ export default function SettingsScreen() {
 
 			<Host matchContents>
 				<Column>
-					<Button onClick={seedDb}>
-						<JCText>Seed DB</JCText>
-					</Button>
-
 					<Button onClick={() => Storage.clear()}>
 						<JCText>Clear Data</JCText>
 					</Button>
@@ -114,13 +110,6 @@ export default function SettingsScreen() {
 					</Button>
 				</Column>
 			</Host>
-
-			<Link href="/db-test" style={{
-				backgroundColor: colors.background,
-				paddingHorizontal: 8,
-				paddingVertical: 4,
-				borderRadius: 20,
-			}}>Go to DB Test</Link>
 		</ScrollView>
 	);
 }
