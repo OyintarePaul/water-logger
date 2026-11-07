@@ -1,11 +1,11 @@
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
-import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
-import { getAllEntries, HistoryEntry } from "@/lib/water-storage";
 import { useSettingsStore } from "@/store/settingsStore";
+
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { getAllEntriesQuery } from "@/db/queries";
 
 function formatDateLabel(dateKey: string): string {
 	const date = new Date(dateKey + "T00:00:00");
@@ -18,17 +18,10 @@ function formatDateLabel(dateKey: string): string {
 
 export default function HistoryScreen() {
 	const insets = useSafeAreaInsets();
-	const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
+	const { data: entries } = useLiveQuery(getAllEntriesQuery());
 	const dailyGoal = useSettingsStore((state) => state.dailyGoal);
 
-	// Reload each time the tab is opened, so new glasses and goal changes show up
-	useFocusEffect(
-		useCallback(() => {
-			getAllEntries().then((list) => setEntries(list))
-		}, []),
-	);
-
-	if (entries === null) {
+	if (!entries) {
 		return <View style={styles.loading} />;
 	}
 
@@ -39,7 +32,7 @@ export default function HistoryScreen() {
 			<View style={styles.card}>
 				<FlatList
 					data={entries}
-					keyExtractor={(item) => item.dateKey}
+					keyExtractor={(item) => item.log_date}
 					contentContainerStyle={styles.list}
 					ItemSeparatorComponent={() => <View style={styles.separator} />}
 					ListEmptyComponent={
@@ -55,7 +48,7 @@ export default function HistoryScreen() {
 							<View style={styles.row}>
 								<View style={styles.rowText}>
 									<Text style={styles.date}>
-										{formatDateLabel(item.dateKey)}
+										{formatDateLabel(item.log_date)}
 									</Text>
 									<Text style={styles.detail}>
 										{item.count} / {dailyGoal} glasses

@@ -7,11 +7,11 @@ export const usersTable = sqliteTable("users_table", {
   email: text().notNull(),
 });
 
-// export const logsTable = sqliteTable("logs_table", {
-//   id: int().primaryKey({ autoIncrement: true }),
-//   log_date: text().notNull(),
-//   count: int().notNull()
-// })
+export const logsTable = sqliteTable("logs_table", {
+  id: int().primaryKey({ autoIncrement: true }),
+  log_date: text().notNull().unique(),
+  count: int().notNull()
+})
 
 
 

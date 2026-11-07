@@ -1,7 +1,6 @@
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
 import { useEffect, useState } from "react";
 import {
-	ActivityIndicator,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -14,7 +13,7 @@ import WeeklyChart from "@/components/weekly-chart";
 import { getTodayKey } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { getMotivation } from "@/lib/motivation";
-import { addGlass, getCount, getStreak, undoGlass } from "@/lib/water-storage";
+import { getStreak, undoGlass } from "@/lib/water-storage";
 import * as Haptics from "expo-haptics";
 import Animated, {
 	useSharedValue,
@@ -25,10 +24,14 @@ import Animated, {
 import { useSettingsStore } from "@/store/settingsStore";
 import { cancelNotification, scheduleNotification } from "@/lib/notifications";
 
+import { useLiveQuery } from "drizzle-orm/expo-sqlite"
+import { getTodayEntry, incrementToday } from "@/db/queries";
+import { StreakTracker } from "@/components/streak-tracker";
+
 export default function HomeScreen() {
 	const insets = useSafeAreaInsets();
-	const [count, setCount] = useState<number | null>(null);
-	const {dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
+	const { data } = useLiveQuery(getTodayEntry())
+	const { dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
 	const [streak, setStreak] = useState(0);
 	const scale = useSharedValue(1);
 
@@ -37,17 +40,16 @@ export default function HomeScreen() {
 	}));
 
 	useEffect(() => {
-		getCount(getTodayKey()).then(setCount);
-	}, []);
-
-	useEffect(() => {
 		getStreak(dailyGoal).then(setStreak);
 	}, [dailyGoal]);
 
+	let count: number = 0
+	if (data.length > 0) {
+		count = data[0].count
+	}
+
 	async function handleAdd() {
-		const previous = count ?? 0;
-		const next = await addGlass(getTodayKey());
-		setCount(next);
+		await incrementToday();
 		setStreak(await getStreak(dailyGoal));
 
 		scale.value = withSequence(
@@ -67,16 +69,7 @@ export default function HomeScreen() {
 
 	async function handleUndo() {
 		const next = await undoGlass(getTodayKey());
-		setCount(next);
 		setStreak(await getStreak(dailyGoal));
-	}
-
-	if (count === null) {
-		return (
-			<View style={styles.loading}>
-				<ActivityIndicator color={colors.primary} />
-			</View>
-		);
 	}
 
 	return (
@@ -92,11 +85,7 @@ export default function HomeScreen() {
 				<MaterialDesignIcons name="water" size={28} color={colors.primary} />
 				<Text style={styles.title}>Water</Text>
 			</View>
-			{streak > 0 && (
-				<View style={styles.streakPill}>
-					<Text style={styles.streakText}>🔥 {streak}-day streak</Text>
-				</View>
-			)}
+			<StreakTracker goal={dailyGoal}/>
 			<View style={styles.card}>
 				<ProgressRing count={count} goal={dailyGoal}>
 					<Animated.Text style={[styles.count, animatedStyle]}>
@@ -130,6 +119,7 @@ export default function HomeScreen() {
 				/>
 				<Text style={styles.undoButtonText}>Undo</Text>
 			</Pressable>
+
 			<WeeklyChart todayCount={count} goal={dailyGoal} />
 		</ScrollView>
 	);
@@ -165,19 +155,7 @@ const styles = StyleSheet.create({
 		fontSize: 28,
 		color: colors.text,
 	},
-	streakPill: {
-		alignSelf: "flex-start",
-		backgroundColor: "#FFF4E0",
-		borderRadius: 20,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		marginBottom: spacing.lg,
-	},
-	streakText: {
-		fontFamily: fonts.bold,
-		fontSize: 14,
-		color: colors.muted,
-	},
+
 	card: {
 		backgroundColor: colors.card,
 		borderRadius: 20,
