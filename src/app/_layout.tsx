@@ -20,13 +20,13 @@ const TAB_ICONS: Record<string, [IconName, IconName]> = {
 	index: ["water", "water-outline"],
 	history: ["history", "history"],
 	settings: ["tune-variant", "tune-variant"],
-	"db-test": ["database", "database"]
+	"db-test": ["database", "database"],
 };
 
 export default function RootLayout() {
 	const insets = useSafeAreaInsets();
 	const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_700Bold });
-	const { success: migrationSuccess, error: migrationError } = useDBMigration()
+	const { success: migrationSuccess, error: migrationError } = useDBMigration();
 
 	if (!fontsLoaded && !migrationSuccess) return null;
 

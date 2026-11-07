@@ -7,8 +7,8 @@ Notifications.setNotificationHandler({
 		shouldSetBadge: true,
 		shouldShowBanner: true,
 		shouldShowList: true,
-	})
-})
+	}),
+});
 
 export const requestPermission = async () => {
 	if (Platform.OS === "android") {
@@ -25,35 +25,44 @@ export const requestPermission = async () => {
 	if (status === "granted") return true;
 	const { status: newStatus } = await Notifications.requestPermissionsAsync();
 	return newStatus === "granted";
-}
+};
 
 type ScheduleOptions = {
 	title: string;
 	body: string;
 	seconds?: number;
-	date?: Date,
-	data?: Record<string, unknown>,
-	repeats?: boolean
-}
+	date?: Date;
+	data?: Record<string, unknown>;
+	repeats?: boolean;
+};
 
 export const scheduleNotification = async ({
-	title, body, seconds = 1, date, data, repeats = true
+	title,
+	body,
+	seconds = 1,
+	date,
+	data,
+	repeats = true,
 }: ScheduleOptions) => {
 	const { status } = await Notifications.getPermissionsAsync();
-	if (status !== "granted") return null
+	if (status !== "granted") return null;
 	const trigger: Notifications.SchedulableNotificationTriggerInput = date
 		? { type: Notifications.SchedulableTriggerInputTypes.DATE, date }
-		: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: Math.max(1, seconds), repeats }
+		: {
+				type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+				seconds: Math.max(1, seconds),
+				repeats,
+			};
 	return Notifications.scheduleNotificationAsync({
 		content: { title, body, data },
-		trigger
-	})
-}
+		trigger,
+	});
+};
 
 export const cancelNotification = async (id?: string) => {
 	if (id) {
-		await Notifications.cancelScheduledNotificationAsync(id)
+		await Notifications.cancelScheduledNotificationAsync(id);
 	} else {
 		await Notifications.cancelAllScheduledNotificationsAsync();
 	}
-}
+};

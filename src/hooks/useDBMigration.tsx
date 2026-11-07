@@ -4,14 +4,14 @@ import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { useEffect, useState } from "react";
 
 export default function useDBMigration() {
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState<Error | null>(null)
+	const [success, setSuccess] = useState(false);
+	const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        migrate(db, migrations)
-            .then(() => setSuccess(true))
-            .catch((err) => setError(err));
-    })
+	useEffect(() => {
+		migrate(db, migrations)
+			.then(() => setSuccess(true))
+			.catch((err) => setError(err));
+	});
 
-    return { success, error }
+	return { success, error };
 }

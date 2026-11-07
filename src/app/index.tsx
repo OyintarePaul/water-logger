@@ -1,16 +1,10 @@
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
-import {
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import WeeklyChart from "@/components/weekly-chart";
 import { getTodayKey } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
-import Progress from "@/components/progress"
+import Progress from "@/components/progress";
 import { undoGlass } from "@/lib/water-storage";
 import * as Haptics from "expo-haptics";
 import {
@@ -21,13 +15,13 @@ import {
 import { useSettingsStore } from "@/store/settingsStore";
 import { cancelNotification, scheduleNotification } from "@/lib/notifications";
 
-import { useLiveQuery } from "drizzle-orm/expo-sqlite"
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { getTodayEntry, incrementToday } from "@/db/queries";
 import { StreakTracker } from "@/components/streak-tracker";
 
 export default function HomeScreen() {
 	const insets = useSafeAreaInsets();
-	const { data } = useLiveQuery(getTodayEntry())
+	const { data } = useLiveQuery(getTodayEntry());
 	const { dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
 	const scale = useSharedValue(1);
 
@@ -47,7 +41,7 @@ export default function HomeScreen() {
 				title: "Don't forget to drink",
 				body: "It's an hour already, don't forget to hydrate",
 				seconds: 5,
-			})
+			});
 		}
 	}
 
@@ -68,7 +62,7 @@ export default function HomeScreen() {
 				<MaterialDesignIcons name="water" size={28} color={colors.primary} />
 				<Text style={styles.title}>Water</Text>
 			</View>
-			<StreakTracker goal={dailyGoal}/>
+			<StreakTracker goal={dailyGoal} />
 			<Progress dailyGoal={dailyGoal} todayCount={count} scale={scale} />
 			<Pressable
 				onPress={handleAdd}
@@ -119,7 +113,7 @@ const styles = StyleSheet.create({
 		fontFamily: fonts.bold,
 		fontSize: 28,
 		color: colors.text,
-	},	
+	},
 	addButton: {
 		backgroundColor: colors.primary,
 		borderRadius: 20,

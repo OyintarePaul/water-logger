@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
 
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { getAllEntriesQuery } from "@/db/queries";
 
 function formatDateLabel(dateKey: string): string {
