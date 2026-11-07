@@ -89,7 +89,7 @@ export default function HomeScreen() {
 				<Text style={styles.undoButtonText}>Undo</Text>
 			</Pressable> */}
 
-			<WeeklyChart todayCount={count} goal={dailyGoal} />
+			<WeeklyChart goal={dailyGoal} />
 		</ScrollView>
 	);
 }
