@@ -14,13 +14,10 @@ import useDBMigration from "@/hooks/useDBMigration";
 
 type IconName = ComponentProps<typeof MaterialDesignIcons>["name"];
 
-// Icon for each tab: [active, inactive]. History and Settings use the same
-// glyph in both states; only the colour changes.
 const TAB_ICONS: Record<string, [IconName, IconName]> = {
 	index: ["water", "water-outline"],
 	history: ["history", "history"],
 	settings: ["tune-variant", "tune-variant"],
-	"db-test": ["database", "database"],
 };
 
 export default function RootLayout() {
@@ -60,7 +57,6 @@ export default function RootLayout() {
 				<Tabs.Screen name="index" />
 				<Tabs.Screen name="history" />
 				<Tabs.Screen name="settings" />
-				<Tabs.Screen name="db-test" />
 			</Tabs>
 		</>
 	);
