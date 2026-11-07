@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { Host, Switch, Button, Text as JCText, Column } from "@expo/ui/jetpack-compose"
+import {
+	Host,
+	Switch,
+	Button,
+	Text as JCText,
+	Column,
+} from "@expo/ui/jetpack-compose";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, fonts, spacing } from "@/lib/theme";
 import { useSettingsStore } from "@/store/settingsStore";
-import { requestPermission, scheduleNotification, cancelNotification } from "@/lib/notifications";
-import Storage from 'expo-sqlite/kv-store';
-import { seedDb } from "@/lib/water-storage";
+import {
+	requestPermission,
+	scheduleNotification,
+	cancelNotification,
+} from "@/lib/notifications";
+import Storage from "expo-sqlite/kv-store";
+import { resetDatabaseFile, seedLogsDatabase } from "@/db/reset";
 
 const MIN_GOAL = 1;
 const MAX_GOAL = 50;
@@ -15,7 +25,6 @@ export default function SettingsScreen() {
 	const insets = useSafeAreaInsets();
 	const { dailyGoal, reminderEnabled, updateSettings } = useSettingsStore();
 	const [draft, setDraft] = useState(() => String(dailyGoal));
-
 
 	async function commitGoal() {
 		const parsed = parseInt(draft, 10);
@@ -40,12 +49,11 @@ export default function SettingsScreen() {
 		const id = await scheduleNotification({
 			title: "Don't forget to drink",
 			body: "Don't forget to hydrate today",
-			seconds: 3600
-		})
+			seconds: 3600,
+		});
 
 		updateSettings({ reminderEnabled: granted, reminderId: id });
 	}
-
 
 	return (
 		<ScrollView
@@ -84,13 +92,15 @@ export default function SettingsScreen() {
 				<View style={styles.row}>
 					<Text style={styles.rowLabel}>Setup Reminder</Text>
 					<Host matchContents>
-						<Switch value={reminderEnabled} colors={{
-							checkedThumbColor: "#FFFFFF",
-							checkedTrackColor: colors.primary,
-							uncheckedThumbColor: colors.muted,
-							uncheckedTrackColor: "#E0EEF5", // same as your card/input border
-							uncheckedBorderColor: "#E0EEF5",
-						}}
+						<Switch
+							value={reminderEnabled}
+							colors={{
+								checkedThumbColor: "#FFFFFF",
+								checkedTrackColor: colors.primary,
+								uncheckedThumbColor: colors.muted,
+								uncheckedTrackColor: "#E0EEF5", // same as your card/input border
+								uncheckedBorderColor: "#E0EEF5",
+							}}
 							onCheckedChange={handleReminderToggle}
 						/>
 					</Host>
@@ -99,12 +109,16 @@ export default function SettingsScreen() {
 
 			<Host matchContents>
 				<Column>
-					<Button onClick={seedDb}>
-						<JCText>Seed DB</JCText>
-					</Button>
-
 					<Button onClick={() => Storage.clear()}>
 						<JCText>Clear Data</JCText>
+					</Button>
+
+					<Button onClick={resetDatabaseFile}>
+						<JCText>Clear SQLite</JCText>
+					</Button>
+
+					<Button onClick={seedLogsDatabase}>
+						<JCText>Seed Data</JCText>
 					</Button>
 				</Column>
 			</Host>

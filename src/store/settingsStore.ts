@@ -5,7 +5,7 @@ import Storage from "expo-sqlite/kv-store";
 interface Settings {
 	dailyGoal: number;
 	reminderEnabled: boolean;
-	reminderId: string | null
+	reminderId: string | null;
 }
 
 interface SettingsState extends Settings {
@@ -15,7 +15,7 @@ interface SettingsState extends Settings {
 const defaults: Settings = {
 	dailyGoal: 10,
 	reminderEnabled: false,
-	reminderId: null
+	reminderId: null,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -30,7 +30,7 @@ export const useSettingsStore = create<SettingsState>()(
 			partialize: (state): Settings => ({
 				dailyGoal: state.dailyGoal,
 				reminderEnabled: state.reminderEnabled,
-				reminderId: state.reminderId
+				reminderId: state.reminderId,
 			}),
 			version: 1,
 		},

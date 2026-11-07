@@ -1,66 +1,56 @@
-import Storage from "expo-sqlite/kv-store";
+import { useMemo } from "react";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { getLast7DayKeys } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
-import { readLog } from "@/lib/water-storage";
-
-type WaterLog = Record<string, number>;
+import { getLogsByDates } from "@/db/queries"
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-type BarItem = {
-	value: number;
-	label: string;
-	rawValue: number;
-	frontColor: string;
-	topLabelComponent?: () => React.ReactNode;
-};
-
 type Props = {
-	todayCount: number;
 	goal: number;
 };
 
-export default function WeeklyChart({ todayCount, goal }: Props) {
+export default function WeeklyChart({ goal }: Props) {
 	const { width: screenWidth } = useWindowDimensions();
-	const [barData, setBarData] = useState<BarItem[]>([]);
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
+	const last7DayKeys = getLast7DayKeys()
+	const { data: dbRows } = useLiveQuery(getLogsByDates(last7DayKeys))
+	
 	const chartWidth = screenWidth - spacing.lg * 4;
 
-	useEffect(() => {
-		async function loadChart() {
-			const keys = getLast7DayKeys();
-			let log = await readLog();
-
-			const data = keys.map((key, i) => {
-				const date = new Date(key + "T00:00:00");
-				const label = DAY_LABELS[date.getDay()];
-				const isToday = i === keys.length - 1;
-				const rawValue = isToday ? todayCount : (log[key] ?? 0);
-				const value = Math.min(rawValue, goal);
-				return { value, label, rawValue, frontColor: colors.primary };
-			});
-
-			setBarData(
-				data.map((item, i) => ({
-					...item,
-					topLabelComponent:
-						selectedIndex === i
-							? () => (
-									<View style={styles.tooltip}>
-										<Text style={styles.tooltipText}>{item.rawValue}</Text>
-									</View>
-								)
-							: undefined,
-				})),
-			);
+	const barData = useMemo(() => {
+		const logMap: Record<string, number> = {};
+		if (dbRows) {
+			for (const row of dbRows) {
+				logMap[row.log_date] = row.count;
+			}
 		}
 
-		loadChart();
-	}, [todayCount, goal, selectedIndex]);
+		return last7DayKeys.map((key, i) => {
+			const date = new Date(key + "T00:00:00");
+			const label = DAY_LABELS[date.getDay()];
+			
+			const rawValue = logMap[key] ?? 0;
+			const value = Math.min(rawValue, goal);
+
+			return {
+				value,
+				label,
+				frontColor: colors.primary,
+				topLabelComponent:
+					selectedIndex === i
+						? () => (
+								<View style={styles.tooltip}>
+									<Text style={styles.tooltipText}>{rawValue}</Text>
+								</View>
+							)
+						: undefined,
+			};
+		});
+	}, [dbRows, last7DayKeys, goal, selectedIndex]);
 
 	return (
 		<View style={styles.card}>

@@ -71,13 +71,11 @@ export async function getAllEntries(): Promise<HistoryEntry[]> {
 		.sort((a, b) => b.dateKey.localeCompare(a.dateKey));
 }
 
-
-
 export async function seedDb() {
-	const keys = getLast7DayKeys()
-	const log = {} as WaterLog
+	const keys = getLast7DayKeys();
+	const log = {} as WaterLog;
 	for (const key of keys) {
-		log[key] = Math.floor(Math.random() * 20 + 1)
+		log[key] = Math.floor(Math.random() * 20 + 1);
 	}
-	writeLog(log)
+	writeLog(log);
 }

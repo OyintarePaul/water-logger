@@ -1,55 +1,34 @@
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
-import { useEffect, useState } from "react";
-import {
-	ActivityIndicator,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ProgressRing from "@/components/progress-ring";
 import WeeklyChart from "@/components/weekly-chart";
 import { getTodayKey } from "@/lib/dates";
 import { colors, fonts, spacing } from "@/lib/theme";
-import { getMotivation } from "@/lib/motivation";
-import { addGlass, getCount, getStreak, undoGlass } from "@/lib/water-storage";
+import Progress from "@/components/progress";
+import { undoGlass } from "@/lib/water-storage";
 import * as Haptics from "expo-haptics";
-import Animated, {
+import {
 	useSharedValue,
-	useAnimatedStyle,
 	withSequence,
 	withTiming,
 } from "react-native-reanimated";
 import { useSettingsStore } from "@/store/settingsStore";
 import { cancelNotification, scheduleNotification } from "@/lib/notifications";
 
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { getTodayEntry, incrementToday } from "@/db/queries";
+import { StreakTracker } from "@/components/streak-tracker";
+
 export default function HomeScreen() {
 	const insets = useSafeAreaInsets();
-	const [count, setCount] = useState<number | null>(null);
-	const {dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
-	const [streak, setStreak] = useState(0);
+	const { data } = useLiveQuery(getTodayEntry());
+	const { dailyGoal, reminderEnabled, reminderId } = useSettingsStore();
 	const scale = useSharedValue(1);
 
-	const animatedStyle = useAnimatedStyle(() => ({
-		transform: [{ scale: scale.value }],
-	}));
-
-	useEffect(() => {
-		getCount(getTodayKey()).then(setCount);
-	}, []);
-
-	useEffect(() => {
-		getStreak(dailyGoal).then(setStreak);
-	}, [dailyGoal]);
+	const count = data[0]?.count ?? 0;
 
 	async function handleAdd() {
-		const previous = count ?? 0;
-		const next = await addGlass(getTodayKey());
-		setCount(next);
-		setStreak(await getStreak(dailyGoal));
-
+		await incrementToday();
 		scale.value = withSequence(
 			withTiming(1.2, { duration: 100 }),
 			withTiming(1, { duration: 150 }),
@@ -60,23 +39,14 @@ export default function HomeScreen() {
 			cancelNotification(reminderId);
 			scheduleNotification({
 				title: "Don't forget to drink",
-				body: "It's an hour already, don't forget to hydrate"
-			})
+				body: "It's an hour already, don't forget to hydrate",
+				seconds: 5,
+			});
 		}
 	}
 
 	async function handleUndo() {
-		const next = await undoGlass(getTodayKey());
-		setCount(next);
-		setStreak(await getStreak(dailyGoal));
-	}
-
-	if (count === null) {
-		return (
-			<View style={styles.loading}>
-				<ActivityIndicator color={colors.primary} />
-			</View>
-		);
+		await undoGlass(getTodayKey());
 	}
 
 	return (
@@ -92,20 +62,8 @@ export default function HomeScreen() {
 				<MaterialDesignIcons name="water" size={28} color={colors.primary} />
 				<Text style={styles.title}>Water</Text>
 			</View>
-			{streak > 0 && (
-				<View style={styles.streakPill}>
-					<Text style={styles.streakText}>🔥 {streak}-day streak</Text>
-				</View>
-			)}
-			<View style={styles.card}>
-				<ProgressRing count={count} goal={dailyGoal}>
-					<Animated.Text style={[styles.count, animatedStyle]}>
-						{count}
-					</Animated.Text>
-					<Text style={styles.goal}>/ {dailyGoal} glasses</Text>
-				</ProgressRing>
-				<Text style={styles.motivation}>{getMotivation(count, dailyGoal)}</Text>
-			</View>
+			<StreakTracker goal={dailyGoal} />
+			<Progress dailyGoal={dailyGoal} todayCount={count} scale={scale} />
 			<Pressable
 				onPress={handleAdd}
 				style={({ pressed }) => [
@@ -116,7 +74,7 @@ export default function HomeScreen() {
 				<MaterialDesignIcons name="water-plus" size={22} color="#fff" />
 				<Text style={styles.addButtonText}>Add glass</Text>
 			</Pressable>
-			<Pressable
+			{/* <Pressable
 				onPress={handleUndo}
 				style={({ pressed }) => [
 					styles.undoButton,
@@ -129,23 +87,14 @@ export default function HomeScreen() {
 					color={colors.muted}
 				/>
 				<Text style={styles.undoButtonText}>Undo</Text>
-			</Pressable>
-			<WeeklyChart todayCount={count} goal={dailyGoal} />
+			</Pressable> */}
+
+			<WeeklyChart goal={dailyGoal} />
 		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
-	root: {
-		flex: 1,
-		backgroundColor: colors.background,
-	},
-	loading: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: colors.background,
-	},
 	scroll: {
 		flex: 1,
 		backgroundColor: colors.background,
@@ -164,50 +113,6 @@ const styles = StyleSheet.create({
 		fontFamily: fonts.bold,
 		fontSize: 28,
 		color: colors.text,
-	},
-	streakPill: {
-		alignSelf: "flex-start",
-		backgroundColor: "#FFF4E0",
-		borderRadius: 20,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		marginBottom: spacing.lg,
-	},
-	streakText: {
-		fontFamily: fonts.bold,
-		fontSize: 14,
-		color: colors.muted,
-	},
-	card: {
-		backgroundColor: colors.card,
-		borderRadius: 20,
-		padding: spacing.lg,
-		alignItems: "center",
-		marginBottom: spacing.lg,
-		borderWidth: 1,
-		borderColor: "#E0EEF5",
-	},
-	count: {
-		fontFamily: fonts.bold,
-		fontSize: 64,
-		lineHeight: 72,
-		color: colors.primary,
-		textAlign: "center",
-		includeFontPadding: false,
-	},
-	goal: {
-		fontFamily: fonts.regular,
-		fontSize: 16,
-		color: colors.muted,
-		marginTop: spacing.sm,
-		textAlign: "center",
-	},
-	motivation: {
-		fontFamily: fonts.regular,
-		fontSize: 15,
-		color: colors.muted,
-		marginTop: spacing.md,
-		textAlign: "center",
 	},
 	addButton: {
 		backgroundColor: colors.primary,
