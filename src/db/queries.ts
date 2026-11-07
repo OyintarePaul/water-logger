@@ -1,6 +1,6 @@
 import { db } from "./init";
 import { logsTable } from "./schema";
-import { desc, eq, lte, sql } from "drizzle-orm";
+import { desc, eq, lte, sql, inArray } from "drizzle-orm";
 import { formatDateKey, getTodayKey } from "@/lib/dates";
 
 export const getAllEntriesQuery = () =>
@@ -25,35 +25,19 @@ export const incrementToday = () => {
 		});
 };
 
-export async function getStreak(goal: number): Promise<number> {
-	const todayKey = getTodayKey();
+export function getStreakQuery(goal: number) {
+	const todayKey = getTodayKey()
+	return db
+			.select()
+			.from(logsTable)
+			.where(lte(logsTable.log_date, todayKey))
+			.orderBy(desc(logsTable.log_date))
+}
 
-	// 1. Fetch all records from today backwards, ordered newest to oldest
-	const records = await db
-		.select()
-		.from(logsTable)
-		.where(lte(logsTable.log_date, todayKey))
-		.orderBy(desc(logsTable.log_date));
-
-	// 2. Convert database rows into a quick-lookup Record object: { "2026-11-07": 5 }
-	const logMap: Record<string, number> = {};
-	for (const row of records) {
-		logMap[row.log_date] = row.count;
-	}
-
-	const cursor = new Date();
-
-	// 3. Today hasn't met the goal yet: start counting from yesterday instead
-	if ((logMap[formatDateKey(cursor)] ?? 0) < goal) {
-		cursor.setDate(cursor.getDate() - 1);
-	}
-
-	let streak = 0;
-	// 4. Iterate backwards day by day to count the continuous streak
-	while (streak < 365 && (logMap[formatDateKey(cursor)] ?? 0) >= goal) {
-		streak++;
-		cursor.setDate(cursor.getDate() - 1);
-	}
-
-	return streak;
+export function getLogsByDates(dates: string[]) {
+  return db
+    .select()
+    .from(logsTable)
+    .where(inArray(logsTable.log_date, dates))
+	.orderBy(desc(logsTable.log_date));
 }
