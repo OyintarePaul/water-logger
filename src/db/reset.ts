@@ -1,10 +1,11 @@
-import { usersTable } from './schema';
+import { usersTable, logsTable } from './schema';
 import { db } from './init';
 
 export async function resetDatabaseFile() {
     try {
-        const deleted = await db.delete(usersTable).returning()
-        console.log("Deleted users table")
+        await db.delete(usersTable)
+        await db.delete(logsTable)
+        console.log("Deleted tables")
     } catch (error) {
         console.error("Failed to delete database file:", error);
     }
