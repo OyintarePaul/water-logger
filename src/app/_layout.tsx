@@ -1,3 +1,4 @@
+import "@/global.css";
 import { Tabs } from "expo-router";
 import {
 	Nunito_400Regular,
@@ -57,6 +58,7 @@ export default function RootLayout() {
 				<Tabs.Screen name="index" />
 				<Tabs.Screen name="history" />
 				<Tabs.Screen name="settings" />
+				<Tabs.Screen name="uniwind" />
 			</Tabs>
 		</>
 	);
