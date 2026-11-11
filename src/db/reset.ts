@@ -1,5 +1,5 @@
 import { usersTable, logsTable } from "./schema";
-import { db } from "./init";
+import { db } from "./client";
 
 export async function resetDatabaseFile() {
 	try {

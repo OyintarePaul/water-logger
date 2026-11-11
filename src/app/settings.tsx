@@ -1,200 +1,153 @@
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import {
-	Host,
-	Switch,
-	Button,
-	Text as JCText,
-	Column,
-} from "@expo/ui/jetpack-compose";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, fonts, spacing } from "@/lib/theme";
-import { useSettingsStore } from "@/store/settingsStore";
-import {
-	requestPermission,
-	scheduleNotification,
-	cancelNotification,
-} from "@/lib/notifications";
-import Storage from "expo-sqlite/kv-store";
-import { resetDatabaseFile, seedLogsDatabase } from "@/db/reset";
-
-const MIN_GOAL = 1;
-const MAX_GOAL = 50;
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useResolveClassNames } from "uniwind";
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { db } from '@/db/client';
+import { userSettings, intakeLogs } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { Host } from '@expo/ui';
+import { Slider, Switch } from "@expo/ui/jetpack-compose";
+import ResetOnboardingButton from '@/components/reset-onboarding-button';
 
 export default function SettingsScreen() {
-	const insets = useSafeAreaInsets();
-	const { dailyGoal, reminderEnabled, updateSettings } = useSettingsStore();
-	const [draft, setDraft] = useState(() => String(dailyGoal));
+  const primaryStyle = useResolveClassNames('text-primary');
+  const primaryLightStyle = useResolveClassNames('text-primary-light');
 
-	async function commitGoal() {
-		const parsed = parseInt(draft, 10);
-		const valid =
-			!Number.isNaN(parsed) && parsed >= MIN_GOAL && parsed <= MAX_GOAL;
-		if (!valid) {
-			setDraft(String(dailyGoal));
-			return;
-		}
-		updateSettings({ dailyGoal: parsed });
-		setDraft(String(parsed));
-	}
+  // switch
+  const primary = useResolveClassNames('text-primary');
+  const surface = useResolveClassNames('text-surface');
+  const canvas = useResolveClassNames('text-canvas');
+  const textMuted = useResolveClassNames('text-text-muted');
 
-	async function handleReminderToggle(enabled: boolean) {
-		if (!enabled) {
-			cancelNotification();
-			updateSettings({ reminderEnabled: false, reminderId: null });
-			return;
-		}
+  const { data: settingsList } = useLiveQuery(
+    db.select().from(userSettings).where(eq(userSettings.id, 1))
+  );
+  const settings = settingsList?.[0] ?? {
+    dailyGoalMl: 3000,
+    remindersEnabled: 1,
+    reminderIntervalMins: 120,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '07:00',
+  };
 
-		const granted = await requestPermission();
-		const id = await scheduleNotification({
-			title: "Don't forget to drink",
-			body: "Don't forget to hydrate today",
-			seconds: 3600,
-		});
+  const updateGoal = async (newGoal: number) => {
+    await db
+      .update(userSettings)
+      .set({ dailyGoalMl: newGoal })
+      .where(eq(userSettings.id, 1))
+      .execute();
+  };
 
-		updateSettings({ reminderEnabled: granted, reminderId: id });
-	}
+  const toggleReminders = async (value: boolean) => {
+    await db
+      .update(userSettings)
+      .set({ remindersEnabled: value ? 1 : 0 })
+      .where(eq(userSettings.id, 1))
+      .execute();
+  };
 
-	return (
-		<ScrollView
-			style={styles.scroll}
-			contentContainerStyle={[
-				styles.container,
-				{
-					paddingTop: insets.top + spacing.lg,
-					paddingBottom: insets.bottom + spacing.lg,
-				},
-			]}
-			showsVerticalScrollIndicator={false}
-		>
-			<Text style={styles.title}>Settings</Text>
+  const handleResetLogs = () => {
+    Alert.alert(
+      'Reset Water Logs',
+      'Are you sure you want to clear your water intake logs?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear Logs',
+          style: 'destructive',
+          onPress: async () => {
+            await db.delete(intakeLogs)
+            Alert.alert('Success', "Your logs have been reset.");
+          },
+        },
+      ]
+    );
+  };
+  return (
+    <ScrollView className="flex-1 bg-canvas px-4 py-4">
+      {/* HYDRATION GOAL SECTION */}
+      <Text className="text-xs font-semibold text-text-muted uppercase tracking-wider px-2 mb-2 mt-2">
+        Hydration Goal
+      </Text>
+      <View className="bg-surface rounded-3xl p-5 border border-slate-100 shadow-sm mb-6">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-base font-medium text-text-main">Daily Target</Text>
+          <Text className="text-base font-bold text-primary">
+            {settings.dailyGoalMl.toLocaleString()} ml
+          </Text>
+        </View>
+        <Host matchContents={{ vertical: true }} style={{ width: '100%' }}>
+          <Slider
+            min={1500}
+            max={5000}
+            steps={13}
+            colors={{
+              thumbColor: primaryStyle.color as string,
+              activeTrackColor: primaryStyle.color as string,
+              inactiveTrackColor: primaryLightStyle.color as string,
+              activeTickColor: "transparent",
+              inactiveTickColor: "transparent"
+            }}
+            value={settings.dailyGoalMl}
+            onValueChange={(val: number) => updateGoal(Math.round(val))}
 
-			<Text style={styles.sectionLabel}>Goal</Text>
-			<View style={styles.card}>
-				<View style={styles.row}>
-					<Text style={styles.rowLabel}>Glasses per day</Text>
-					<TextInput
-						value={draft}
-						onChangeText={setDraft}
-						onBlur={commitGoal}
-						onSubmitEditing={commitGoal}
-						keyboardType="number-pad"
-						maxLength={2}
-						returnKeyType="done"
-						style={styles.input}
-					/>
-				</View>
-			</View>
+          />
 
-			{/* Reminder */}
-			<Text style={styles.sectionLabel}>Reminder</Text>
-			<View style={styles.card}>
-				<View style={styles.row}>
-					<Text style={styles.rowLabel}>Setup Reminder</Text>
-					<Host matchContents>
-						<Switch
-							value={reminderEnabled}
-							colors={{
-								checkedThumbColor: "#FFFFFF",
-								checkedTrackColor: colors.primary,
-								uncheckedThumbColor: colors.muted,
-								uncheckedTrackColor: "#E0EEF5", // same as your card/input border
-								uncheckedBorderColor: "#E0EEF5",
-							}}
-							onCheckedChange={handleReminderToggle}
-						/>
-					</Host>
-				</View>
-			</View>
 
-			<Host matchContents>
-				<Column>
-					<Button onClick={() => Storage.clear()}>
-						<JCText>Clear Data</JCText>
-					</Button>
+        </Host>
+      </View>
 
-					<Button onClick={resetDatabaseFile}>
-						<JCText>Clear SQLite</JCText>
-					</Button>
+      {/* NOTIFICATIONS & REMINDERS SECTION */}
+      <Text className="text-xs font-semibold text-text-muted uppercase tracking-wider px-2 mb-2">
+        Notifications & Reminders
+      </Text>
+      <View className="bg-surface rounded-3xl p-4 border border-slate-100 shadow-sm mb-6">
+        <View className="flex-row justify-between items-center pb-3 border-b border-slate-100">
+          <View>
+            <Text className="text-base font-medium text-text-main">Enable Reminders</Text>
+            <Text className="text-xs text-text-muted">Local offline reminder notifications</Text>
+          </View>
+          <Host matchContents>
+            <Switch
+              value={settings.remindersEnabled === 1}
+              onCheckedChange={toggleReminders}
+              colors={{
+                checkedTrackColor: primary.color as string,       // #0A93F6 (--color-primary)
+                checkedThumbColor: surface.color as string,       // #FFFFFF (--color-surface)
+                uncheckedTrackColor: canvas.color as string,      // #F4F7FB (--color-canvas)
+                uncheckedThumbColor: textMuted.color as string,   // #64748B (--color-text-muted)
+                uncheckedBorderColor: textMuted.color as string,  // #64748B (--color-text-muted)
+              }}
+            />
+          </Host>
+        </View>
 
-					<Button onClick={seedLogsDatabase}>
-						<JCText>Seed Data</JCText>
-					</Button>
-				</Column>
-			</Host>
-		</ScrollView>
-	);
+        <View className="flex-row justify-between items-center py-3 border-b border-slate-100">
+          <Text className="text-base font-medium text-text-main">Reminder Interval</Text>
+          <Text className="text-base text-text-muted">Every {settings.reminderIntervalMins / 60} hrs</Text>
+        </View>
+
+        <View className="flex-row justify-between items-center py-3 border-b border-slate-100">
+          <Text className="text-base font-medium text-text-main">Quiet Hours Start</Text>
+          <Text className="text-base text-text-muted">{settings.quietHoursStart}</Text>
+        </View>
+
+        <View className="flex-row justify-between items-center py-3">
+          <Text className="text-base font-medium text-text-main">Quiet Hours End</Text>
+          <Text className="text-base text-text-muted">{settings.quietHoursEnd}</Text>
+        </View>
+      </View>
+
+      {/* APP INFO & DATA MANAGEMENT SECTION */}
+      <Text className="text-xs font-semibold text-text-muted uppercase tracking-wider px-2 mb-2">
+        Data
+      </Text>
+      <View className="bg-surface rounded-3xl border border-slate-100 shadow-sm mb-8">
+        <TouchableOpacity onPress={handleResetLogs} className="items-start p-4">
+          <Text className="text-base font-medium text-red-600">Reset All Logs</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ResetOnboardingButton />
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({
-	loading: {
-		flex: 1,
-		backgroundColor: colors.background,
-	},
-	scroll: {
-		flex: 1,
-		backgroundColor: colors.background,
-	},
-	container: {
-		paddingHorizontal: spacing.lg,
-	},
-	title: {
-		fontFamily: fonts.bold,
-		fontSize: 28,
-		color: colors.text,
-		marginBottom: spacing.lg,
-	},
-	sectionLabel: {
-		fontFamily: fonts.bold,
-		fontSize: 14,
-		color: colors.muted,
-		marginBottom: spacing.sm,
-	},
-	card: {
-		backgroundColor: colors.card,
-		borderRadius: 20,
-		padding: spacing.md,
-		borderWidth: 1,
-		borderColor: "#E0EEF5",
-		marginBottom: spacing.lg,
-	},
-	row: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-	},
-	rowLabel: {
-		fontFamily: fonts.regular,
-		fontSize: 16,
-		color: colors.text,
-	},
-	input: {
-		fontFamily: fonts.bold,
-		fontSize: 18,
-		color: colors.primary,
-		minWidth: 56,
-		textAlign: "center",
-		borderWidth: 1,
-		borderColor: "#E0EEF5",
-		borderRadius: 12,
-		paddingVertical: spacing.sm,
-		paddingHorizontal: spacing.md,
-	},
-	timeRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginTop: spacing.md,
-	},
-	timeText: {
-		fontFamily: fonts.bold,
-		fontSize: 16,
-		color: colors.primary,
-	},
-	warning: {
-		fontFamily: fonts.regular,
-		fontSize: 14,
-		color: colors.muted,
-		marginTop: spacing.md,
-	},
-});

@@ -1,4 +1,4 @@
-import { db } from "./init";
+import { db } from "./client";
 import { logsTable } from "./schema";
 import { desc, eq, lte, sql, inArray } from "drizzle-orm";
 import { formatDateKey, getTodayKey } from "@/lib/dates";

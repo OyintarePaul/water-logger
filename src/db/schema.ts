@@ -1,14 +1,18 @@
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
 
-export const usersTable = sqliteTable("users_table", {
-	id: int().primaryKey({ autoIncrement: true }),
-	name: text().notNull(),
-	age: int().notNull(),
-	email: text().notNull(),
+export const userSettings = sqliteTable('user_settings', {
+  id: integer('id').primaryKey(),
+  dailyGoalMl: integer('daily_goal_ml').default(3000).notNull(),
+  onboardingCompleted: integer('onboarding_completed').default(0).notNull(),
+  remindersEnabled: integer('reminders_enabled').default(1).notNull(),
+  reminderIntervalMins: integer('reminder_interval_mins').default(120).notNull(),
+  quietHoursStart: text('quiet_hours_start').default('22:00').notNull(),
+  quietHoursEnd: text('quiet_hours_end').default('07:00').notNull(),
 });
 
-export const logsTable = sqliteTable("logs_table", {
-	id: int().primaryKey({ autoIncrement: true }),
-	log_date: text().notNull().unique(),
-	count: int().notNull(),
+export const intakeLogs = sqliteTable('intake_logs', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  presetType: text('preset_type').notNull(), // 'sip', 'half_sachet', 'full_sachet', 'small_cup', 'large_cup', 'small_bottle'
+  amountMl: integer('amount_ml').notNull(), // 50, 250, 500, 750, 200, 400, 500
+  loggedAt: text('logged_at').notNull(), // ISO 8601 string
 });

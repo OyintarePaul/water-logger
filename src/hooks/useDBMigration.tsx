@@ -1,4 +1,4 @@
-import { db } from "@/db/init";
+import { db } from "@/db/client";
 import migrations from "@/drizzle/migrations";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { useEffect, useState } from "react";

@@ -1,2 +1,13 @@
 @import 'tailwindcss';
 @import 'uniwind';
+
+@theme {
+  --color-canvas: #F4F7FB;
+  --color-surface: #FFFFFF;
+  --color-primary: #0A93F6;
+  --color-primary-light: #E2EEF8;
+  --color-accent: #2A9D8F;
+  --color-text-main: #1E293B;
+  --color-text-muted: #64748B;
+  --font-sans: "Inter";
+}

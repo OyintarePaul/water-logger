@@ -1,0 +1,147 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "dddd4b38-3d03-4320-a030-45efeaba7953",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "intake_logs",
+      "entityType": "tables"
+    },
+    {
+      "name": "user_settings",
+      "entityType": "tables"
+    },
+    {
+      "table": "intake_logs",
+      "name": "id",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": true,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "intake_logs",
+      "name": "preset_type",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "intake_logs",
+      "name": "amount_ml",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "intake_logs",
+      "name": "logged_at",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "id",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "daily_goal_ml",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "3000",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "onboarding_completed",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "reminders_enabled",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "reminder_interval_mins",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "120",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "quiet_hours_start",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'22:00'",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "user_settings",
+      "name": "quiet_hours_end",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'07:00'",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "intake_logs",
+      "name": "intake_logs_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "user_settings",
+      "name": "user_settings_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}
