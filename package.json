@@ -1,37 +1,37 @@
 {
-  "name": "water",
-  "version": "1.0.0",
-  "main": "expo-router/entry",
-  "dependencies": {
-    "@rn-primitives/portal": "^1.5.3",
-    "@rn-primitives/slot": "^1.5.2",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "expo": "~58.0.25",
-    "expo-constants": "~58.0.16",
-    "expo-linking": "~58.0.17",
-    "expo-router": "~58.0.32",
-    "expo-status-bar": "~58.0.5",
-    "react": "19.3.0",
-    "react-native": "0.88.1",
-    "react-native-reanimated": "4.7.1",
-    "react-native-safe-area-context": "~5.11.1",
-    "react-native-screens": "~4.30.1",
-    "tailwind-merge": "^3.7.0",
-    "tailwindcss": "^4.3.3",
-    "uniwind": "^1.13.2"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.6.8",
-    "@types/react": "~19.3.0",
-    "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "check": "biome check --write"
-  },
-  "private": true
+	"name": "water",
+	"version": "1.0.0",
+	"main": "expo-router/entry",
+	"dependencies": {
+		"@rn-primitives/portal": "^1.5.3",
+		"@rn-primitives/slot": "^1.5.2",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"expo": "~58.0.25",
+		"expo-constants": "~58.0.16",
+		"expo-linking": "~58.0.17",
+		"expo-router": "~58.0.32",
+		"expo-status-bar": "~58.0.5",
+		"react": "19.3.0",
+		"react-native": "0.88.1",
+		"react-native-reanimated": "4.7.1",
+		"react-native-safe-area-context": "~5.11.1",
+		"react-native-screens": "~4.30.1",
+		"tailwind-merge": "^3.7.0",
+		"tailwindcss": "^4.3.3",
+		"uniwind": "^1.13.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.8",
+		"@types/react": "~19.3.0",
+		"typescript": "~6.0.3"
+	},
+	"scripts": {
+		"start": "expo start",
+		"android": "expo start --android",
+		"ios": "expo start --ios",
+		"web": "expo start --web",
+		"check": "biome check --write"
+	},
+	"private": true
 }
