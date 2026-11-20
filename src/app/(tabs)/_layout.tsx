@@ -1,5 +1,8 @@
-import { Tabs } from 'expo-router';
+import { View } from "react-native";
+import { Tabs, useTheme } from 'expo-router';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { HeaderTitle } from '@/components/header-title';
+import { Text } from '@/components/ui/text';
 
 const icons = {
   index: { active: 'home', inactive: 'home-outline' },
@@ -8,9 +11,12 @@ const icons = {
 } as const;
 
 export default function TabsLayout() {
+  const { colors } = useTheme();
   return (
     <Tabs
       screenOptions={({ route }) => ({
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: colors.background },
         tabBarLabelStyle: { marginTop: -4 },
         tabBarIcon: ({ focused, color, size }) => {
           const icon = icons[route.name as keyof typeof icons];
@@ -25,7 +31,17 @@ export default function TabsLayout() {
       })}
     >
       <Tabs.Screen name="index" options={{
-            title: 'Home'
+            title: 'Home',
+            headerTitle: () => (
+                <HeaderTitle subtitle="Good morning" title="Today" />
+            ),
+            headerRight: () => (
+              <View className="mr-4 rounded-full bg-secondary px-4 py-2">
+                <Text className="text-xs font-medium text-secondary-foreground">
+                  {new Date().toLocaleDateString([], { weekday: "short", month: 'short', day: 'numeric' })}
+                </Text>
+              </View>
+            ),
         }}
         />
       <Tabs.Screen name="history" options={{ title: 'History' }} />
