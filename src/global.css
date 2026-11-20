@@ -1,2 +1,86 @@
-@import "tailwindcss";
-@import "uniwind";
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    @variant light {
+      /* Surfaces */
+      --color-background: #F3F7FA;
+      --color-card: #FFFFFF;
+      --color-muted: #EEF4F8;
+
+      /* Text */
+      --color-foreground: #0E2433;
+      --color-card-foreground: #0E2433;
+      --color-muted-foreground: #4F6475;
+
+      /* Brand and actions */
+      --color-primary: #0B6BAE;
+      --color-primary-foreground: #FFFFFF;
+      --color-secondary: #E3F2FB;
+      --color-secondary-foreground: #0B6BAE;
+      --color-accent: #E3F2FB;
+      --color-accent-foreground: #0B6BAE;
+
+      /* Water progress */
+      --color-progress: #1A8FD6;
+      --color-progress-track: #E3F2FB;
+
+      /* Borders and focus */
+      --color-border: #DCE6EE;
+      --color-border-strong: #9DB3C4;
+      --color-input: #DCE6EE;
+      --color-ring: #1A8FD6;
+
+      /* Feedback */
+      --color-destructive: #B42318;
+      --color-destructive-foreground: #FFFFFF;
+
+      /* Shape */
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius: 18px;
+    }
+
+    @variant dark {
+      /* Surfaces */
+      --color-background: #0A1620;
+      --color-card: #122231;
+      --color-muted: #13283A;
+
+      /* Text */
+      --color-foreground: #E8F1F7;
+      --color-card-foreground: #E8F1F7;
+      --color-muted-foreground: #9AB0C0;
+
+      /* Brand and actions (lightened for contrast on dark) */
+      --color-primary: #4DB3EB;
+      --color-primary-foreground: #06202F;
+      --color-secondary: #16324A;
+      --color-secondary-foreground: #A8D8F5;
+      --color-accent: #16324A;
+      --color-accent-foreground: #A8D8F5;
+
+      /* Water progress */
+      --color-progress: #3FA9E6;
+      --color-progress-track: #163049;
+
+      /* Borders and focus */
+      --color-border: #213A4F;
+      --color-border-strong: #3E5A70;
+      --color-input: #213A4F;
+      --color-ring: #4DB3EB;
+
+      /* Feedback */
+      --color-destructive: #F97066;
+      --color-destructive-foreground: #1A0A08;
+
+      /* Shape is shared with light */
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius: 18px;
+    }
+  }
+}

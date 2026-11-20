@@ -1,9 +1,13 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 
 export default function HomeScreen() {
 	return (
 		<View className="flex-1">
-			<Text className="text-red-500">Hello World</Text>
+            <Button>
+    			 <Text>Hello World</Text>
+            </Button>
 		</View>
 	);
 }
