@@ -1,6 +1,7 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import type { PropsWithChildren } from 'react';
-import { Text } from '../ui/text';
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
 
 type StepperProps = PropsWithChildren<{
   onDecrement: () => void;
@@ -18,23 +19,26 @@ export function Stepper({
 }: StepperProps) {
   return (
     <View className="flex-row items-center gap-2">
-      <Pressable
+      <Button
+        variant="secondary"
+        size="icon"
         disabled={!canDecrement}
         onPress={onDecrement}
-        className="size-9 items-center justify-center rounded-full bg-secondary active:opacity-70 disabled:opacity-40"
+        className="rounded-full size-9"
       >
-        <Text className="text-lg font-semibold text-secondary-foreground">−</Text>
-      </Pressable>
+        <Text className="text-base">−</Text>
+      </Button>
 
       {children && <View className="min-w-16 items-center">{children}</View>}
 
-      <Pressable
+      <Button
+        size="icon"
         disabled={!canIncrement}
         onPress={onIncrement}
-        className="size-9 items-center justify-center rounded-full bg-primary active:opacity-70 disabled:opacity-40"
+        className="rounded-full size-9"
       >
-        <Text className="text-lg font-semibold text-primary-foreground">+</Text>
-      </Pressable>
+        <Text className="text-base">+</Text>
+      </Button>
     </View>
   );
 }

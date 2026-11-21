@@ -35,7 +35,7 @@ export function RemindersCard({ settings }: RemindersCardProps) {
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="font-semibold">Reminders</Text>
-            <Text variant="muted" className="text-sm">
+            <Text variant="muted" className="text-muted-foreground">
               Notify me to drink water
             </Text>
           </View>

@@ -37,6 +37,7 @@ export function WeekBarChart({ days, goalMl }: WeekBarChartProps) {
 
 	return (
 		<BarChart
+            key={`${goalMl}-${days.map((d) => d.totalMl).join('-')}`}
 			data={data}
 			width={chartWidth}
 			height={160}

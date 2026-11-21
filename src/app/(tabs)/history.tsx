@@ -6,6 +6,8 @@ import { WeekBarChart } from "@/components/weekly-bar-chart";
 import { DAILY_GOAL_ML } from "@/db/constants";
 import { useHistory } from "@/db/queries/history";
 import { formatTime } from "@/db/queries/water";
+import { useSettings } from '@/db/queries/settings';
+
 
 function dayLabel(date: Date) {
 	const now = new Date();
@@ -26,7 +28,8 @@ function dayDate(date: Date) {
 }
 
 export default function History() {
-	const { days, week, average, goalCount } = useHistory();
+	const settings = useSettings();
+    const { days, week, average, goalCount } = useHistory(settings.dailyGoalMl);
 	return (
 		<ScrollView
 			className="flex-1 bg-background"
@@ -48,11 +51,11 @@ export default function History() {
 						</View>
 					</View>
 
-					<WeekBarChart days={week} goalMl={DAILY_GOAL_ML} />
+					<WeekBarChart days={week} goalMl={settings.dailyGoalMl} />
 
-					<Text className="text-xs text-muted-foreground">
-						Dashed line marks the {DAILY_GOAL_ML.toLocaleString()} ml goal.
-					</Text>
+					{/*<Text className="text-xs text-muted-foreground">
+						Dashed line marks the {settings.dailyGoalMl.toLocaleString()} ml goal.
+					</Text>*/}
 				</CardContent>
 			</Card>
 

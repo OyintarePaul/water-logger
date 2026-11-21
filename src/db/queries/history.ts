@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { DAILY_GOAL_ML } from "../constants";
 import type { waterEntries } from "../schema";
 import { parseUtc, useAllEntries } from "./water";
 
@@ -20,7 +19,7 @@ export type WeekDay = {
 
 const EMPTY: Entry[] = [];
 
-export function useHistory() {
+export function useHistory(goalMl: number) {
 	const entries = useAllEntries() ?? EMPTY;
 
 	return useMemo(() => {
@@ -41,7 +40,7 @@ export function useHistory() {
 			date.setHours(0, 0, 0, 0);
 			date.setDate(date.getDate() - (6 - i));
 			const totalMl = groups.get(date.toDateString())?.totalMl ?? 0;
-			return { date, totalMl, goalMet: totalMl >= DAILY_GOAL_ML };
+			return { date, totalMl, goalMet: totalMl >= goalMl };
 		});
 
 		// Average of the six completed days, excluding today
@@ -51,5 +50,5 @@ export function useHistory() {
 		const goalCount = week.filter((d) => d.goalMet).length;
 
 		return { days: [...groups.values()], week, average, goalCount };
-	}, [entries]);
+	}, [entries, goalMl]);
 }

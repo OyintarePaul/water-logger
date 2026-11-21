@@ -4,11 +4,11 @@ import { QuickLogs } from "@/components/quick-logs";
 import { Text } from "@/components/ui/text";
 import { WaterProgressCard } from "@/components/water-progress-card";
 import { type DayStatus, WeekStreak } from "@/components/week-streak";
-import { DAILY_GOAL_ML } from "@/db/constants";
 import { logWater, useTodaySummary } from "@/db/queries/water";
 import { UndoToast } from '@/components/undo-toast';
 import { PRESETS } from "@/db/constants";
 import { deleteEntry } from "@/db/queries/water";
+import { useSettings } from '@/db/queries/settings';
 
 type LastLog = { id: number; label: string; amountMl: number };
 
@@ -21,6 +21,7 @@ const testWeek: DayStatus[] = testGoalMet.map((goalMet, i) => {
 });
 
 export default function HomeScreen() {
+    const settings = useSettings();
 	const { consumedMl, lastLabel, lastTime } = useTodaySummary();
     const [lastLog, setLastLog] = useState<LastLog | null>(null);
 
@@ -34,7 +35,7 @@ export default function HomeScreen() {
     		<ScrollView className="flex-1" contentContainerClassName="gap-4">
     			<WaterProgressCard
     				consumedMl={consumedMl}
-    				goalMl={DAILY_GOAL_ML}
+    				goalMl={settings.dailyGoalMl}
     				lastLabel={lastLabel}
     				lastTime={lastTime}
     			/>
