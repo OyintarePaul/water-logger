@@ -33,7 +33,7 @@ export default function History() {
 		<ScrollView
 			className="flex-1 bg-background"
 			contentContainerClassName="gap-6 p-4"
-            showsVerticalScrollIndicator={false}
+			showsVerticalScrollIndicator={false}
 		>
 			<Card>
 				<CardContent className="gap-4">
@@ -45,10 +45,10 @@ export default function History() {
 							</Text>
 						</View>
 						<View className="rounded-full bg-secondary px-3 py-1">
-                          <Text className="text-xs font-medium text-secondary-foreground">
-                            {streak > 0 ? `${streak} day streak` : 'No streak yet'}
-                          </Text>
-                        </View>
+							<Text className="text-xs font-medium text-secondary-foreground">
+								{streak > 0 ? `${streak} day streak` : "No streak yet"}
+							</Text>
+						</View>
 					</View>
 
 					<WeekBarChart days={week} goalMl={settings.dailyGoalMl} />

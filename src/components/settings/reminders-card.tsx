@@ -1,10 +1,10 @@
 import { Pressable, Switch, View } from "react-native";
 import { useCSSVariable } from "uniwind";
-import { requestReminderPermission } from '@/lib/notifications';
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { HOUR_MAX, HOUR_MIN, REMINDER_INTERVALS_MIN } from "@/db/constants";
 import { type Settings, updateSettings } from "@/db/queries/settings";
+import { requestReminderPermission } from "@/lib/notifications";
 import { Stepper } from "./stepper";
 
 type RemindersCardProps = {
@@ -31,10 +31,10 @@ export function RemindersCard({ settings }: RemindersCardProps) {
 		reminderEndHour,
 	} = settings;
 
-    async function handleToggle(value: boolean) {
-      if (value && !(await requestReminderPermission())) return;
-      updateSettings({ remindersEnabled: value });
-    }
+	async function handleToggle(value: boolean) {
+		if (value && !(await requestReminderPermission())) return;
+		updateSettings({ remindersEnabled: value });
+	}
 
 	return (
 		<Card>

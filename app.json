@@ -27,7 +27,7 @@
 			"expo-router",
 			"expo-sqlite",
 			"@react-native-vector-icons/ionicons",
-            "expo-notifications"
+			"expo-notifications"
 		]
 	}
 }

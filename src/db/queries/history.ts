@@ -48,8 +48,8 @@ export function useHistory(goalMl: number) {
 			week.slice(0, 6).reduce((sum, d) => sum + d.totalMl, 0) / 6,
 		);
 
-        const totals = new Map([...groups].map(([key, g]) => [key, g.totalMl]));
-        const streak = calculateStreak(totals, goalMl);
+		const totals = new Map([...groups].map(([key, g]) => [key, g.totalMl]));
+		const streak = calculateStreak(totals, goalMl);
 
 		return { days: [...groups.values()], week, average, streak };
 	}, [entries, goalMl]);
@@ -58,17 +58,17 @@ export function useHistory(goalMl: number) {
 // Counts consecutive local days, ending today or yesterday, where the total met the goal.
 // Today is skipped if it isn't met yet, so it doesn't break the streak.
 export function calculateStreak(totals: Map<string, number>, goalMl: number) {
-  const cursor = new Date();
-  cursor.setHours(0, 0, 0, 0);
+	const cursor = new Date();
+	cursor.setHours(0, 0, 0, 0);
 
-  if ((totals.get(cursor.toDateString()) ?? 0) < goalMl) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
+	if ((totals.get(cursor.toDateString()) ?? 0) < goalMl) {
+		cursor.setDate(cursor.getDate() - 1);
+	}
 
-  let streak = 0;
-  while ((totals.get(cursor.toDateString()) ?? 0) >= goalMl) {
-    streak++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
+	let streak = 0;
+	while ((totals.get(cursor.toDateString()) ?? 0) >= goalMl) {
+		streak++;
+		cursor.setDate(cursor.getDate() - 1);
+	}
+	return streak;
 }

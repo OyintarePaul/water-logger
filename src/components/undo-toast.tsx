@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Pressable, View } from "react-native";
+import { Pressable } from "react-native";
 import Animated, {
 	Easing,
 	runOnJS,

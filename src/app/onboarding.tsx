@@ -5,14 +5,18 @@ import { RemindersPage } from "@/components/onboarding/reminders-page";
 import { WelcomePage } from "@/components/onboarding/welcome-page";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { requestReminderPermission } from '@/lib/notifications';
-import { completeOnboarding, updateSettings, useSettings } from '@/db/queries/settings';
+import {
+	completeOnboarding,
+	updateSettings,
+	useSettings,
+} from "@/db/queries/settings";
+import { requestReminderPermission } from "@/lib/notifications";
 
 const PAGES = [WelcomePage, GoalPage, RemindersPage];
 
 export default function OnboardingScreen() {
 	const { width } = useWindowDimensions();
-    const settings = useSettings();
+	const settings = useSettings();
 	const scrollRef = useRef<ScrollView>(null);
 	const [page, setPage] = useState(0);
 	const isLast = page === PAGES.length - 1;
@@ -23,13 +27,13 @@ export default function OnboardingScreen() {
 	}
 
 	async function handleNext() {
-      if (!isLast) return goTo(page + 1);
+		if (!isLast) return goTo(page + 1);
 
-      if (settings.remindersEnabled && !(await requestReminderPermission())) {
-        updateSettings({ remindersEnabled: false });
-      }
-      completeOnboarding();
-    }
+		if (settings.remindersEnabled && !(await requestReminderPermission())) {
+			updateSettings({ remindersEnabled: false });
+		}
+		completeOnboarding();
+	}
 
 	return (
 		<View className="flex-1 bg-background">

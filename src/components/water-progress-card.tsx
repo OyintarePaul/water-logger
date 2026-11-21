@@ -20,22 +20,22 @@ export function WaterProgressCard({
 	const percent = Math.round(Math.min(progress, 1) * 100);
 
 	return (
-			<Card>
-				<CardContent className="items-center gap-4 py-2">
-					<ProgressRing progress={progress} size={180} strokeWidth={14}>
-						<Text className="text-5xl font-bold">{percent}%</Text>
-						<Text className="text-sm text-muted-foreground">
-							{consumedMl} / {goalMl} ml
-						</Text>
-					</ProgressRing>
+		<Card>
+			<CardContent className="items-center gap-4 py-2">
+				<ProgressRing progress={progress} size={180} strokeWidth={14}>
+					<Text className="text-5xl font-bold">{percent}%</Text>
+					<Text className="text-sm text-muted-foreground">
+						{consumedMl} / {goalMl} ml
+					</Text>
+				</ProgressRing>
 
-					<View>
-						<Text className="text-sm text-muted-foreground">
-							Last logged ·{" "}
-							{lastLabel ? `${lastLabel}, ${lastTime}` : "Nothing yet"}
-						</Text>
-					</View>
-				</CardContent>
-			</Card>
+				<View>
+					<Text className="text-sm text-muted-foreground">
+						Last logged ·{" "}
+						{lastLabel ? `${lastLabel}, ${lastTime}` : "Nothing yet"}
+					</Text>
+				</View>
+			</CardContent>
+		</Card>
 	);
 }
