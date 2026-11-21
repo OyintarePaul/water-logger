@@ -28,10 +28,10 @@ function PresetCard({ label, amountMl, onPress }: PresetCardProps) {
 		<AnimatedPressable
 			style={animatedStyle}
 			className="basis-[48%] grow"
-            unstable_pressDelay={100}
+			unstable_pressDelay={100}
 			onPressIn={() => {
 				scale.value = withSpring(0.95, { damping: 15, stiffness: 400 });
-                onPress()
+				onPress();
 			}}
 			onPressOut={() => {
 				scale.value = withSpring(1, { damping: 15, stiffness: 400 });
@@ -68,10 +68,10 @@ export function QuickLogs({ onPresetPress }: QuickLogsProps) {
 						label={preset.label}
 						amountMl={preset.amountMl}
 						onPress={() => {
-                          const t = Date.now();
-                          onPresetPress(preset);
-                          console.log('log took', Date.now() - t, 'ms');
-                        }}
+							const t = Date.now();
+							onPresetPress(preset);
+							console.log("log took", Date.now() - t, "ms");
+						}}
 					/>
 				))}
 			</View>

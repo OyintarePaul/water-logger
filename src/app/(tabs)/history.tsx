@@ -5,9 +5,8 @@ import { Text } from "@/components/ui/text";
 import { WeekBarChart } from "@/components/weekly-bar-chart";
 import { DAILY_GOAL_ML } from "@/db/constants";
 import { useHistory } from "@/db/queries/history";
+import { useSettings } from "@/db/queries/settings";
 import { formatTime } from "@/db/queries/water";
-import { useSettings } from '@/db/queries/settings';
-
 
 function dayLabel(date: Date) {
 	const now = new Date();
@@ -29,7 +28,7 @@ function dayDate(date: Date) {
 
 export default function History() {
 	const settings = useSettings();
-    const { days, week, average, goalCount } = useHistory(settings.dailyGoalMl);
+	const { days, week, average, goalCount } = useHistory(settings.dailyGoalMl);
 	return (
 		<ScrollView
 			className="flex-1 bg-background"

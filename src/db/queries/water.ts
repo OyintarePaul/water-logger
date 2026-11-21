@@ -6,9 +6,15 @@ import { waterEntries } from "../schema";
 // Timestamps are stored in UTC, so compare the local calendar day inside SQLite
 const isToday = sql`date(${waterEntries.loggedAt}, 'localtime') = date('now', 'localtime')`;
 
-export function logWater({ label, amountMl }: { label: string; amountMl: number }) {
-  const result = db.insert(waterEntries).values({ label, amountMl }).run();
-  return result.lastInsertRowId;
+export function logWater({
+	label,
+	amountMl,
+}: {
+	label: string;
+	amountMl: number;
+}) {
+	const result = db.insert(waterEntries).values({ label, amountMl }).run();
+	return result.lastInsertRowId;
 }
 
 export function deleteEntry(id: number) {

@@ -1,20 +1,20 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1795210064494,
-      "tag": "0000_sweet_captain_stacy",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1795269824052,
-      "tag": "0001_easy_frank_castle",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1795210064494,
+			"tag": "0000_sweet_captain_stacy",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1795269824052,
+			"tag": "0001_easy_frank_castle",
+			"breakpoints": true
+		}
+	]
 }
