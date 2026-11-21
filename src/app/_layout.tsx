@@ -6,9 +6,15 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { NavigationThemeProvider } from "@/components/navigation-theme-provider";
 import { db } from "@/db/client";
 import migrations from "@/drizzle/migrations";
+import { useEffect } from 'react';
+import { ensureSettings } from '@/db/queries/settings';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
+
+    useEffect(() => {
+        if (success) ensureSettings();
+    }, [success]);
 
 	if (error) {
 		return (

@@ -15,6 +15,7 @@ export default function TabsLayout() {
 	return (
 		<Tabs
 			screenOptions={({ route }) => ({
+                headerTitleAlign: 'left',
 				headerShadowVisible: false,
 				headerStyle: { backgroundColor: colors.background },
 				tabBarLabelStyle: { marginTop: -4 },
@@ -50,7 +51,13 @@ export default function TabsLayout() {
 					),
 				}}
 			/>
-			<Tabs.Screen name="history" options={{ title: "History" }} />
+			<Tabs.Screen name="history" options={{
+                    title: "History",
+                    headerTitle: () => (
+                        <HeaderTitle subtitle="Your logs, newest first" title="History" subtitlePosition="bottom" />
+                    ),
+                }}
+            />
 			<Tabs.Screen name="settings" options={{ title: "Settings" }} />
 		</Tabs>
 	);
