@@ -62,9 +62,9 @@ export function UndoToast({
 	return (
 		<Animated.View
 			style={[animatedStyle, { elevation: 6 }]}
-			className="absolute inset-x-4 bottom-4 flex-row items-center justify-between rounded-md bg-[#322F35] py-3 pl-4 pr-2"
+			className="absolute inset-x-4 bottom-4 flex-row items-center justify-between rounded-md bg-foreground py-3 pl-4 pr-2"
 		>
-			<Text className="flex-1 text-[#F4EFF4]" numberOfLines={1}>
+			<Text className="flex-1 text-background" numberOfLines={1}>
 				{label} · {amountMl} ml logged
 			</Text>
 			<Pressable
@@ -72,7 +72,7 @@ export function UndoToast({
 				hitSlop={8}
 				className="rounded-sm px-3 py-2 active:opacity-70"
 			>
-				<Text className="font-semibold uppercase tracking-wide text-[#8FD3F7]">
+				<Text className="font-semibold uppercase tracking-wide text-progress">
 					Undo
 				</Text>
 			</Pressable>

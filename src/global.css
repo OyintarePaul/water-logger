@@ -36,6 +36,9 @@
       --color-destructive: #B42318;
       --color-destructive-foreground: #FFFFFF;
 
+      --color-switch-track-off: #9DB3C4;
+      --color-switch-thumb: #FFFFFF;
+
       /* Shape */
       --radius-sm: 12px;
       --radius-md: 18px;
@@ -75,6 +78,9 @@
       /* Feedback */
       --color-destructive: #F97066;
       --color-destructive-foreground: #1A0A08;
+
+      --color-switch-track-off: #3E5A70;
+      --color-switch-thumb: #E8F1F7;
 
       /* Shape is shared with light */
       --radius-sm: 12px;
