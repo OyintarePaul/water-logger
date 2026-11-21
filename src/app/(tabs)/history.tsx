@@ -27,11 +27,6 @@ function dayDate(date: Date) {
 
 export default function History() {
 	const { days, week, average, goalCount } = useHistory();
-	console.log(
-		"week",
-		week.map((d) => [d.date.toDateString(), d.totalMl]),
-	);
-
 	return (
 		<ScrollView
 			className="flex-1 bg-background"
@@ -81,7 +76,7 @@ export default function History() {
 						</Text>
 					</View>
 
-					<Card>
+					<Card className="py-0">
 						<CardContent className="p-0">
 							{day.entries.map((entry, i) => (
 								<View

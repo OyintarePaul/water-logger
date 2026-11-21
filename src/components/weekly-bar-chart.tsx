@@ -59,7 +59,6 @@ export function WeekBarChart({ days, goalMl }: WeekBarChartProps) {
 				dashGap: 4,
 			}}
 			disableScroll
-			key={days.map((d) => d.totalMl).join("-")}
 		/>
 	);
 }

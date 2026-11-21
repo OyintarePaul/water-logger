@@ -28,15 +28,16 @@ function PresetCard({ label, amountMl, onPress }: PresetCardProps) {
 		<AnimatedPressable
 			style={animatedStyle}
 			className="basis-[48%] grow"
-			onPress={onPress}
+            unstable_pressDelay={100}
 			onPressIn={() => {
-				scale.value = withSpring(0.95);
+				scale.value = withSpring(0.95, { damping: 15, stiffness: 400 });
+                onPress()
 			}}
 			onPressOut={() => {
-				scale.value = withSpring(1);
+				scale.value = withSpring(1, { damping: 15, stiffness: 400 });
 			}}
 		>
-			<Card className="gap-2">
+			<Card className="gap-1 py-4">
 				<CardHeader className="flex-row items-center justify-between pb-0">
 					<CardTitle>{label}</CardTitle>
 					<Ionicons name="water" size={18} color="#1A8FD6" />
@@ -66,7 +67,11 @@ export function QuickLogs({ onPresetPress }: QuickLogsProps) {
 						key={preset.label}
 						label={preset.label}
 						amountMl={preset.amountMl}
-						onPress={() => onPresetPress(preset)}
+						onPress={() => {
+                          const t = Date.now();
+                          onPresetPress(preset);
+                          console.log('log took', Date.now() - t, 'ms');
+                        }}
 					/>
 				))}
 			</View>

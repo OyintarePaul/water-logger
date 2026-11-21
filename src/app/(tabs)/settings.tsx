@@ -1,7 +1,8 @@
 import { Alert, View } from "react-native";
 import { Button } from "../../components/ui/button";
 import { Text } from "../../components/ui/text";
-import { clearAllEntries } from "../../db/queries/water";
+import { clearAllEntries } from "@/db/queries/water";
+import { seedWaterEntries } from '@/db/seed';
 
 export default function Settings() {
 	function handleClear() {
@@ -20,6 +21,10 @@ export default function Settings() {
 			<Button variant="destructive" onPress={handleClear}>
 				<Text>Clear all logs</Text>
 			</Button>
+
+            <Button variant="outline" onPress={seedWaterEntries}>
+              <Text>Seed test data</Text>
+            </Button>
 		</View>
 	);
 }
