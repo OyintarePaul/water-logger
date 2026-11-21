@@ -28,11 +28,12 @@ function dayDate(date: Date) {
 
 export default function History() {
 	const settings = useSettings();
-	const { days, week, average, goalCount } = useHistory(settings.dailyGoalMl);
+	const { days, week, average, streak } = useHistory(settings.dailyGoalMl);
 	return (
 		<ScrollView
 			className="flex-1 bg-background"
 			contentContainerClassName="gap-6 p-4"
+            showsVerticalScrollIndicator={false}
 		>
 			<Card>
 				<CardContent className="gap-4">
@@ -44,10 +45,10 @@ export default function History() {
 							</Text>
 						</View>
 						<View className="rounded-full bg-secondary px-3 py-1">
-							<Text className="text-xs font-medium text-secondary-foreground">
-								{goalCount} of 7 at goal
-							</Text>
-						</View>
+                          <Text className="text-xs font-medium text-secondary-foreground">
+                            {streak > 0 ? `${streak} day streak` : 'No streak yet'}
+                          </Text>
+                        </View>
 					</View>
 
 					<WeekBarChart days={week} goalMl={settings.dailyGoalMl} />

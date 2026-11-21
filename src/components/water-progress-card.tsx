@@ -20,7 +20,6 @@ export function WaterProgressCard({
 	const percent = Math.round(Math.min(progress, 1) * 100);
 
 	return (
-		<View className="px-4">
 			<Card>
 				<CardContent className="items-center gap-4 py-2">
 					<ProgressRing progress={progress} size={180} strokeWidth={14}>
@@ -38,6 +37,5 @@ export function WaterProgressCard({
 					</View>
 				</CardContent>
 			</Card>
-		</View>
 	);
 }

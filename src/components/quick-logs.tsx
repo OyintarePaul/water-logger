@@ -56,8 +56,8 @@ type QuickLogsProps = {
 
 export function QuickLogs({ onPresetPress }: QuickLogsProps) {
 	return (
-		<View className="p-4">
-			<View className="flex-row items-center justify-between mb-2">
+		<View className="gap-2">
+			<View className="flex-row items-center justify-between">
 				<Text variant="h4">Quick log</Text>
 				<Text variant="muted">Tap to add</Text>
 			</View>
