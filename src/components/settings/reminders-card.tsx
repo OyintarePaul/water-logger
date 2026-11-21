@@ -1,5 +1,6 @@
 import { Pressable, Switch, View } from "react-native";
 import { useCSSVariable } from "uniwind";
+import { requestReminderPermission } from '@/lib/notifications';
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { HOUR_MAX, HOUR_MIN, REMINDER_INTERVALS_MIN } from "@/db/constants";
@@ -30,6 +31,11 @@ export function RemindersCard({ settings }: RemindersCardProps) {
 		reminderEndHour,
 	} = settings;
 
+    async function handleToggle(value: boolean) {
+      if (value && !(await requestReminderPermission())) return;
+      updateSettings({ remindersEnabled: value });
+    }
+
 	return (
 		<Card>
 			<CardContent className="gap-4">
@@ -42,9 +48,7 @@ export function RemindersCard({ settings }: RemindersCardProps) {
 					</View>
 					<Switch
 						value={remindersEnabled}
-						onValueChange={(value) =>
-							updateSettings({ remindersEnabled: value })
-						}
+						onValueChange={handleToggle}
 						trackColor={{ false: track, true: primary }}
 						thumbColor={thumb}
 					/>

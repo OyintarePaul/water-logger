@@ -8,6 +8,7 @@ import { NavigationThemeProvider } from "@/components/navigation-theme-provider"
 import { db } from "@/db/client";
 import { ensureSettings, useSettings } from "@/db/queries/settings";
 import migrations from "@/drizzle/migrations";
+import { useReminderSync } from '@/hooks/use-reminder-sync';
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
@@ -46,6 +47,7 @@ export default function RootLayout() {
 
 function AppStack() {
 	const { onboardingCompleted } = useSettings();
+    useReminderSync();
 
 	return (
 		<Stack>

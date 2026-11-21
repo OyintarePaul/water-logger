@@ -26,7 +26,8 @@
 		"plugins": [
 			"expo-router",
 			"expo-sqlite",
-			"@react-native-vector-icons/ionicons"
+			"@react-native-vector-icons/ionicons",
+            "expo-notifications"
 		]
 	}
 }

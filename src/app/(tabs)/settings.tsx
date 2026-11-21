@@ -6,6 +6,7 @@ import { Text } from "@/components/ui/text";
 import { useSettings } from "@/db/queries/settings";
 import { clearAllEntries } from "@/db/queries/water";
 import { seedWaterEntries } from "@/db/seed";
+import { debugTestNotification } from "@/lib/notifications"
 
 export default function SettingsScreen() {
 	const settings = useSettings();
@@ -33,6 +34,10 @@ export default function SettingsScreen() {
 			<Button variant="outline" onPress={seedWaterEntries}>
 				<Text>Seed test data</Text>
 			</Button>
+
+            <Button variant="outline" onPress={debugTestNotification}>
+              <Text>Test notification</Text>
+            </Button>
 		</ScrollView>
 	);
 }
