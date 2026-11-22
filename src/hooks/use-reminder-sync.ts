@@ -11,7 +11,6 @@ export function useReminderSync() {
 	const lastLoggedAt = entries[0]?.loggedAt ?? null; // newest first
 
 	useEffect(() => {
-		console.log("Resyncing Notifications...");
 		syncReminders({
 			settings,
 			lastLogAt: lastLoggedAt ? parseUtc(lastLoggedAt) : null,

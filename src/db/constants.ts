@@ -4,7 +4,7 @@ export const GOAL_STEP_ML = 250;
 export const GOAL_MIN_ML = 500;
 export const GOAL_MAX_ML = 5000;
 
-export const REMINDER_INTERVALS_MIN = [30, 60, 120, 180] as const;
+export const REMINDER_INTERVALS_MIN = [1, 30, 60, 120, 180] as const;
 
 export const HOUR_MIN = 0;
 export const HOUR_MAX = 23;

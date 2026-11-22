@@ -4,6 +4,9 @@ import type { Settings } from "@/db/queries/settings";
 
 const CHANNEL_ID = "reminders";
 
+// Android allows 500 scheduled alarms per app. Stay well under it.
+export const MAX_SCHEDULED_REMINDERS = 60;
+
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
 		shouldShowBanner: true,
@@ -77,36 +80,37 @@ type SyncInput = {
 };
 
 // Clears and rebuilds today's reminders. Call whenever settings or today's logs change.
-export async function syncReminders({
-	settings,
-	lastLogAt,
-	totalMl,
-}: SyncInput) {
-	await ensureChannel();
-	await Notifications.cancelAllScheduledNotificationsAsync();
+export async function syncReminders({ settings, lastLogAt, totalMl }: SyncInput) {
+  try {
+    await ensureChannel();
+    await Notifications.cancelAllScheduledNotificationsAsync();
 
-	// Skip when reminders are off or the goal is already met
-	if (!settings.remindersEnabled || totalMl >= settings.dailyGoalMl) return;
+    // Skip when reminders are off or the goal is already met
+    if (!settings.remindersEnabled || totalMl >= settings.dailyGoalMl) return;
 
-	const { granted } = await Notifications.getPermissionsAsync();
-	if (!granted) return;
+    const { granted } = await Notifications.getPermissionsAsync();
+    if (!granted) return;
 
-	const remaining = settings.dailyGoalMl - totalMl;
-	const times = computeReminderTimes(settings, new Date(), lastLogAt);
+    const remaining = settings.dailyGoalMl - totalMl;
+    const times = computeReminderTimes(settings, new Date(), lastLogAt).slice(
+      0,
+      MAX_SCHEDULED_REMINDERS,
+    );
 
-	await Promise.all(
-		times.map((date) =>
-			Notifications.scheduleNotificationAsync({
-				content: {
-					title: "Time for a drink 💧",
-					body: `${remaining.toLocaleString()} ml to go today`,
-				},
-				trigger: {
-					type: Notifications.SchedulableTriggerInputTypes.DATE,
-					date,
-					channelId: CHANNEL_ID,
-				},
-			}),
-		),
-	);
+    for (const date of times) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Time for a drink 💧',
+          body: `${remaining.toLocaleString()} ml to go today`,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date,
+          channelId: CHANNEL_ID,
+        },
+      });
+    }
+  } catch (error) {
+    console.warn('Could not sync reminders', error);
+  }
 }
