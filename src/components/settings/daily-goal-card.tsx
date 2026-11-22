@@ -25,7 +25,10 @@ export function DailyGoalCard({ goalMl }: DailyGoalCardProps) {
 	return (
 		<Card>
 			<CardContent className="gap-2">
-				<Text variant="muted" className="text-xs text-muted-foreground font-semibold uppercase">
+				<Text
+					variant="muted"
+					className="text-xs text-muted-foreground font-semibold uppercase"
+				>
 					Daily goal
 				</Text>
 

@@ -25,7 +25,7 @@ export default function SettingsScreen() {
 			<DailyGoalCard goalMl={settings.dailyGoalMl} />
 			<RemindersCard settings={settings} />
 
-			<View className="flex-1"/>
+			<View className="flex-1" />
 			<Button variant="destructive" onPress={handleClear}>
 				<Text>Clear all logs</Text>
 			</Button>

@@ -1,5 +1,4 @@
 import { type ReactNode, useEffect } from "react";
-import { useCSSVariable } from "uniwind";
 import { View } from "react-native";
 import Animated, {
 	Easing,
@@ -8,6 +7,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
+import { useCSSVariable } from "uniwind";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -24,10 +24,10 @@ export function ProgressRing({
 	strokeWidth = 12,
 	children,
 }: ProgressRingProps) {
-    const [trackColor, progressColor] = useCSSVariable([
-        "--color-progress-track",
-        "--color-progress",
-    ]);
+	const [trackColor, progressColor] = useCSSVariable([
+		"--color-progress-track",
+		"--color-progress",
+	]);
 	const center = size / 2;
 	const radius = (size - strokeWidth) / 2;
 	const circumference = 2 * Math.PI * radius;

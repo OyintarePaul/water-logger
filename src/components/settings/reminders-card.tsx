@@ -21,10 +21,10 @@ function formatHour(hour: number) {
 
 export function RemindersCard({ settings }: RemindersCardProps) {
 	const [primary, track, thumb] = useCSSVariable([
-        "--color-primary",
-        "--color-switch-track-off",
-        "--color-switch-thumb",
-    ]);
+		"--color-primary",
+		"--color-switch-track-off",
+		"--color-switch-thumb",
+	]);
 
 	const {
 		remindersEnabled,
