@@ -25,7 +25,7 @@ export function DailyGoalCard({ goalMl }: DailyGoalCardProps) {
 	return (
 		<Card>
 			<CardContent className="gap-2">
-				<Text variant="muted" className="text-xs font-semibold uppercase">
+				<Text variant="muted" className="text-xs text-muted-foreground font-semibold uppercase">
 					Daily goal
 				</Text>
 
@@ -34,11 +34,8 @@ export function DailyGoalCard({ goalMl }: DailyGoalCardProps) {
 						<Text className="text-4xl font-bold">
 							{goalMl.toLocaleString()} <Text className="text-lg">ml</Text>
 						</Text>
-						<Text variant="muted" className="text-sm">
+						<Text variant="muted" className="text-muted-foreground">
 							About {glasses} glasses a day
-						</Text>
-						<Text variant="muted" className="text-sm">
-							Steps of {GOAL_STEP_ML} ml
 						</Text>
 					</View>
 

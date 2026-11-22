@@ -1,12 +1,10 @@
-import { Alert, ScrollView } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { DailyGoalCard } from "@/components/settings/daily-goal-card";
 import { RemindersCard } from "@/components/settings/reminders-card";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useSettings } from "@/db/queries/settings";
 import { clearAllEntries } from "@/db/queries/water";
-import { seedWaterEntries } from "@/db/seed";
-import { debugTestNotification } from "@/lib/notifications";
 
 export default function SettingsScreen() {
 	const settings = useSettings();
@@ -23,21 +21,22 @@ export default function SettingsScreen() {
 	}
 
 	return (
-		<ScrollView className="flex-1" contentContainerClassName="gap-4 p-4">
+		<ScrollView className="flex-1" contentContainerClassName="gap-4 p-4 flex-1">
 			<DailyGoalCard goalMl={settings.dailyGoalMl} />
 			<RemindersCard settings={settings} />
 
-			{/* Temporary test tools, remove before release */}
+			<View className="flex-1"/>
 			<Button variant="destructive" onPress={handleClear}>
 				<Text>Clear all logs</Text>
 			</Button>
-			<Button variant="outline" onPress={seedWaterEntries}>
+
+			{/*<Button variant="outline" onPress={seedWaterEntries}>
 				<Text>Seed test data</Text>
 			</Button>
 
 			<Button variant="outline" onPress={debugTestNotification}>
 				<Text>Test notification</Text>
-			</Button>
+			</Button>*/}
 		</ScrollView>
 	);
 }
