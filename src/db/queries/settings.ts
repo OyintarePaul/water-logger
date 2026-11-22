@@ -32,5 +32,5 @@ export function useSettings(): Settings {
 }
 
 export function resetOnboarding() {
-    updateSettings({ onboardingCompleted: false });
+	updateSettings({ onboardingCompleted: false });
 }

@@ -24,10 +24,10 @@ export const DAILY_GOAL_ML = DEFAULT_SETTINGS.dailyGoalMl;
 export type Preset = { label: string; amountMl: number };
 
 export const PRESETS: readonly Preset[] = [
-    { label: "Sip", amountMl: 50 },
-    { label: "Half Sachet", amountMl: 250 },
-    { label: "Full Sachet", amountMl: 500 },
-    { label: "Small Cup", amountMl: 300 },
-    { label: "Small Bottle", amountMl: 300 },
-    { label: "Medium Cup", amountMl: 500 },
+	{ label: "Sip", amountMl: 50 },
+	{ label: "Half Sachet", amountMl: 250 },
+	{ label: "Full Sachet", amountMl: 500 },
+	{ label: "Small Cup", amountMl: 300 },
+	{ label: "Small Bottle", amountMl: 300 },
+	{ label: "Medium Cup", amountMl: 500 },
 ];
