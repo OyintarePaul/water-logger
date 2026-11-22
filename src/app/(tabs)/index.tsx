@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { QuickLogs } from "@/components/quick-logs";
 import { StreakCard } from "@/components/streak-card";
 import { UndoToast } from "@/components/undo-toast";
 import { WaterProgressCard } from "@/components/water-progress-card";
-import { type DayStatus, WeekStreak } from "@/components/week-streak";
-import type { PRESETS } from "@/db/constants";
+import type { Preset } from "@/db/constants";
 import { useHistory } from "@/db/queries/history";
 import { useSettings } from "@/db/queries/settings";
 import { deleteEntry, logWater, useTodaySummary } from "@/db/queries/water";
@@ -18,7 +17,7 @@ export default function HomeScreen() {
 	const { streak } = useHistory(settings.dailyGoalMl);
 	const [lastLog, setLastLog] = useState<LastLog | null>(null);
 
-	function handlePresetPress(preset: (typeof PRESETS)[number]) {
+	function handlePresetPress(preset: Preset) {
 		const id = logWater({ label: preset.label, amountMl: preset.amountMl });
 		setLastLog({ id, label: preset.label, amountMl: preset.amountMl });
 	}

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useSettings } from "@/db/queries/settings";
 import { clearAllEntries } from "@/db/queries/water";
+import { resetOnboarding } from "@/db/queries/settings";
 
 export default function SettingsScreen() {
 	const settings = useSettings();
@@ -26,6 +27,12 @@ export default function SettingsScreen() {
 			<RemindersCard settings={settings} />
 
 			<View className="flex-1" />
+
+            {/* Temporary test tools, remove before release */}
+            <Button variant="outline" onPress={resetOnboarding}>
+                <Text>Reset onboarding</Text>
+            </Button>
+
 			<Button variant="destructive" onPress={handleClear}>
 				<Text>Clear all logs</Text>
 			</Button>

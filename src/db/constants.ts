@@ -21,11 +21,13 @@ export const DEFAULT_SETTINGS = {
 /** @deprecated Read the goal from useSettings(). Remove in the cleanup pass. */
 export const DAILY_GOAL_ML = DEFAULT_SETTINGS.dailyGoalMl;
 
-export const PRESETS = [
-	{ label: "Sip", amountMl: 50 },
-	{ label: "Half Sachet", amountMl: 250 },
-	{ label: "Full Sachet", amountMl: 500 },
-	{ label: "Small Cup", amountMl: 300 },
-	{ label: "Small Bottle", amountMl: 300 },
-	{ label: "Medium Cup", amountMl: 500 },
-] as const;
+export type Preset = { label: string; amountMl: number };
+
+export const PRESETS: readonly Preset[] = [
+    { label: "Sip", amountMl: 50 },
+    { label: "Half Sachet", amountMl: 250 },
+    { label: "Full Sachet", amountMl: 500 },
+    { label: "Small Cup", amountMl: 300 },
+    { label: "Small Bottle", amountMl: 300 },
+    { label: "Medium Cup", amountMl: 500 },
+];

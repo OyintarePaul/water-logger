@@ -30,3 +30,7 @@ export function useSettings(): Settings {
 	);
 	return data[0] ?? { id: SETTINGS_ROW_ID, ...DEFAULT_SETTINGS };
 }
+
+export function resetOnboarding() {
+    updateSettings({ onboardingCompleted: false });
+}

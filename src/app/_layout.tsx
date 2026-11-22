@@ -1,7 +1,7 @@
 import "@/global.css";
 import { PortalHost } from "@rn-primitives/portal";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { Stack } from "expo-router";
+import { Stack, useTheme } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { NavigationThemeProvider } from "@/components/navigation-theme-provider";
@@ -9,6 +9,7 @@ import { db } from "@/db/client";
 import { ensureSettings, useSettings } from "@/db/queries/settings";
 import migrations from "@/drizzle/migrations";
 import { useReminderSync } from "@/hooks/use-reminder-sync";
+import { useCSSVariable } from "uniwind";
 
 export default function RootLayout() {
 	const { success, error } = useMigrations(db, migrations);
@@ -47,10 +48,14 @@ export default function RootLayout() {
 
 function AppStack() {
 	const { onboardingCompleted } = useSettings();
+    const { colors } = useTheme()
 	useReminderSync();
 
 	return (
-		<Stack>
+		<Stack screenOptions={{
+            contentStyle: { backgroundColor: colors.background },
+            animation: "fade"
+        }}>
 			<Stack.Protected guard={!onboardingCompleted}>
 				<Stack.Screen name="onboarding" options={{ headerShown: false }} />
 			</Stack.Protected>

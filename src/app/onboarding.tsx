@@ -17,7 +17,7 @@ const PAGES = [WelcomePage, GoalPage, RemindersPage];
 export default function OnboardingScreen() {
 	const { width } = useWindowDimensions();
 	const settings = useSettings();
-	const scrollRef = useRef<ScrollView>(null);
+	const scrollRef = useRef<React.ElementRef<typeof ScrollView>>(null);
 	const [page, setPage] = useState(0);
 	const isLast = page === PAGES.length - 1;
 

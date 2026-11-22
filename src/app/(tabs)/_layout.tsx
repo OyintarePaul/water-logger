@@ -19,7 +19,7 @@ export default function TabsLayout() {
 				headerShadowVisible: false,
 				headerStyle: { backgroundColor: colors.background },
 				tabBarLabelStyle: { marginTop: -4 },
-				tabBarIcon: ({ focused, color, size }) => {
+				tabBarIcon: ({ focused, color }) => {
 					const icon = icons[route.name as keyof typeof icons];
 					return (
 						<Ionicons

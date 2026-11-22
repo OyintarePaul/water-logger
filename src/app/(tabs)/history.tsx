@@ -28,7 +28,7 @@ function dayDate(date: Date) {
 
 type DaySectionProps = {
 	day: DayGroup;
-	waterColor: string;
+	waterColor?: string;
 };
 
 function DaySection({ day, waterColor }: DaySectionProps) {
@@ -86,7 +86,7 @@ export default function History() {
 			data={days}
 			keyExtractor={(day) => day.key}
 			renderItem={({ item }) => (
-				<DaySection day={item} waterColor={waterColor} />
+			     <DaySection day={item} waterColor={String(waterColor ?? "#1A8FD6")} />
 			)}
 			ListHeaderComponent={
 				<Card className="mb-6">

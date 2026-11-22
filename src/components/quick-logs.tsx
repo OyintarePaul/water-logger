@@ -5,15 +5,13 @@ import Animated, {
 	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
-import { PRESETS } from "@/db/constants";
+import { PRESETS, type Preset } from "@/db/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Text } from "./ui/text";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-type PresetCardProps = {
-	label: string;
-	amountMl: number;
+type PresetCardProps = Preset & {
 	onPress: () => void;
 };
 
@@ -51,7 +49,7 @@ function PresetCard({ label, amountMl, onPress }: PresetCardProps) {
 }
 
 type QuickLogsProps = {
-	onPresetPress: (preset: { label: string; amountMl: number }) => void;
+	onPresetPress: (preset: Preset) => void;
 };
 
 export function QuickLogs({ onPresetPress }: QuickLogsProps) {
